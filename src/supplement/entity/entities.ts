@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
+ * Copyright (C) 2023 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DbPopulateService } from './db-populate.service.js';
-import { DevController } from './dev.controller.js';
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-@Module({
-    imports: [TypeOrmModule.forFeature([])],
-    controllers: [DevController],
-    providers: [DbPopulateService],
-    exports: [DbPopulateService],
-})
-export class DevModule {}
+import { Supplement } from './supplement.entity.js';
+
+
+// erforderlich in src/config/db.ts und src/buch/buch.module.ts
+export const entities = [Supplement];

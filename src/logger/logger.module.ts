@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
+ * Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { Global, Module } from '@nestjs/common';
+import { BannerService } from './banner.service.js';
+import { ResponseTimeInterceptor } from './response-time.interceptor.js';
 
-import { DbPopulateService } from './db-populate.service.js';
-import { DevController } from './dev.controller.js';
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+/**
+ * Das Modul besteht aus allgemeinen Services, z.B. MailService.
+ * @packageDocumentation
+ */
 
+/**
+ * Die dekorierte Modul-Klasse mit den Service-Klassen.
+ */
+@Global()
 @Module({
-    imports: [TypeOrmModule.forFeature([])],
-    controllers: [DevController],
-    providers: [DbPopulateService],
-    exports: [DbPopulateService],
+    providers: [BannerService, ResponseTimeInterceptor],
+    exports: [BannerService, ResponseTimeInterceptor],
 })
-export class DevModule {}
+export class LoggerModule {}
