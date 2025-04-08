@@ -1,19 +1,17 @@
-/*
- * Copyright (C) 2021 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Das Modul enthält die Funktion, um die Test-DB neu zu laden.
@@ -21,12 +19,12 @@
  */
 
 import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
-import { release, type, userInfo } from 'node:os';
-import { dbType } from '../config/db.js';
 import figlet from 'figlet';
-import { getLogger } from './logger.js';
-import { nodeConfig } from '../config/node.js';
+import { release, type, userInfo } from 'node:os';
 import process from 'node:process';
+import { dbType } from '../config/db.js';
+import { nodeConfig } from '../config/node.js';
+import { getLogger } from './logger.js';
 
 /**
  * Beim Start ein Banner ausgeben durch `onApplicationBootstrap()`.

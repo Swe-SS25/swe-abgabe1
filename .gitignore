@@ -8,11 +8,11 @@ node_modules
 
 # Generierte Dateien
 build
-.extras/dependency-check-report.html
 .extras/doc/projekthandbuch/html/*
 .extras/doc/folien/*.html
 .extras/doc/api/*
 .extras/doc/ReadMe.html
+scripts/dependency-check-report.html
 node-ts
 temp
 tmp
@@ -21,9 +21,20 @@ dependencies.svg
 # Sensible Daten (Passwort, Token, private Schluessel)
 .extras/compose/db/mysql/db_root_password.txt
 .extras/compose/db/postgres/db_password.txt
+.extras/lasttest-locust/__pycache__
+.extras/lasttest-locust/.venv
 .extras/postman
-src/config/resources/jwt/private-key.pem
-src/config/resources/tls/private-key.pem
+.extras/*.png
+.extras/*.jpeg
+.extras/*.gif
+.extras/*.mp4
+.extras/*.mpeg
+.extras/*.mkv
+.extras/*.avi
+.extras/*.ogg
+.extras/*.webm
+src/config/resources/tls/key.pem
+sonar-project.properties
 
 # Logs
 log
@@ -49,6 +60,9 @@ coverage
 .nyc_output
 .clinic
 __tests__/buch/__snapshots__
+
+# SonarQube
+.sonar
 
 # Snyk
 .snyk

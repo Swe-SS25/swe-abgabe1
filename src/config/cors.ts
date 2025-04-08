@@ -1,29 +1,29 @@
-/*
- * Copyright (C) 2016 - present Juergen Zimmermann, Hochschule Karlsruhe
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+// Copyright (C) 2020 - present Juergen Zimmermann, Hochschule Karlsruhe
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import { type CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface.js';
 
 export const corsOptions: CorsOptions = {
     // Access-Control-Allow-Origin (nur Requests von origin zulassen)
     origin: [
-        'https://studio.apollographql.com',
+        // Angular mit devserver
         'http://localhost:4200',
+        // React mit Vite und devserver
+        'http://localhost:5173',
+        'https://studio.apollographql.com',
         'https://localhost:3001',
-        'http://localhost:3001',
-        '*',
     ],
     // origin: true,
 
@@ -43,7 +43,6 @@ export const corsOptions: CorsOptions = {
         'sec-fetch-mode',
         'sec-fetch-site',
         'sec-fetch-dest',
-        'x-request-type',
     ],
     // Access-Control-Expose-Headers
     exposedHeaders: [

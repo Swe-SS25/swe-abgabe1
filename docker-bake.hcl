@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - current Juergen Zimmermann, Florian Rusch
+# Copyright (C) 2024 - present Juergen Zimmermann, Hochschule Karlsruhe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,19 +13,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# https://docs.npmjs.com/cli/v11/commands/npm-config
-# https://docs.npmjs.com/cli/v11/configuring-npm/npmrc
-# https://github.com/nodejs/node-gyp
-# https://github.com/nodejs/node-gyp/blob/main/README.md#on-windows
+# Aufruf:   docker buildx bake [alpine]
 
-save-exact=true
+# Dateiformate: HCL ( = HashiCorp Configuration Language), YAML (wie in Docker Compose) oder JSON
+# HCL ist maechtiger und flexibler als YAML oder JSON.
 
-# Webbrowser, z.B.:   https://www.npmjs.com/package/typescript
-registry=https://registry.npmjs.org
+# https://docs.docker.com/build/bake/introduction
+# https://docs.docker.com/build/bake/reference
 
-#strict-ssl=false
-#package-lock=false
+target "default" {
+  tags = ["docker.io/juergenzimmermann/buch:2025.4.1-bookworm"]
+  #dockerfile = "Dockerfile"
+}
 
-# C++ notwendig fuer z.B. better-sqlite3, sqlite3, pg-native, re2, argon2, ...
-# https://github.com/nodejs/node-gyp/commit/c7927e228dfde059c93e08c26b54dd8026144583
-# msvs_version=2022
+target "alpine" {
+  tags = ["docker.io/juergenzimmermann/buch:2025.4.1-alpine"]
+  dockerfile = "Dockerfile.alpine"
+}
