@@ -20,4 +20,4 @@ import { Supplement } from './supplement.entity.js';
 
 
 // erforderlich in src/config/db.ts und src/buch/buch.module.ts
-export const entities = [Supplement];
+export const entities = [Supplement, Produktbild, Beschreibung];

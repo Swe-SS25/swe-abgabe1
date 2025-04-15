@@ -31,6 +31,7 @@ import { typeOrmModuleOptions } from './config/typeormOptions.js';
 @Module({
     imports: [
         DevModule,
+        SupplementModule,
         GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions),
         LoggerModule,
         TypeOrmModule.forRoot(typeOrmModuleOptions),
