@@ -27,6 +27,7 @@ import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { graphQlModuleOptions } from './config/graphql.js';
 import { typeOrmModuleOptions } from './config/typeormOptions.js';
+import { SupplementModule } from './supplement/supplement.module.js';
 
 @Module({
     imports: [

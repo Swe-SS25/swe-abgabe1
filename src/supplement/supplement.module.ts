@@ -17,6 +17,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { KeycloakModule } from '../security/keycloak/keycloak.module.js';
 import { entities } from './entity/entities.js';
+import { SupplementWriteService } from './service/supplement-write.service.js';
+import { SupplementWriteController } from './controller/supplement-write.controller.js';
 
 /**
  * Das Modul besteht aus Controller- und Service-Klassen für die Verwaltung von
@@ -30,13 +32,12 @@ import { entities } from './entity/entities.js';
  */
 @Module({
     imports: [KeycloakModule, TypeOrmModule.forFeature(entities)],
-    controllers: [SupplementGetController, SupplementWriteController],
+    controllers: [SupplementWriteController],
     // Provider sind z.B. Service-Klassen fuer DI
     providers: [
-        SupplementReadService,
         SupplementWriteService,
     ],
     // Export der Provider fuer DI in anderen Modulen
-    exports: [SupplementReadService, SupplementWriteService],
+    exports: [SupplementWriteService],
 })
-export class BuchModule {}
+export class SupplementModule {}

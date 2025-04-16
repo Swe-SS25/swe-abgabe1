@@ -20,7 +20,7 @@
 
 import { type Request } from 'express';
 import { nodeConfig } from '../../config/node.js';
-import { BuchReadService } from '../service/buch-read.service.js';
+import { SupplementReadService } from '../service/supplement-read.service.js';
 
 const port = `:${nodeConfig.port}`;
 
@@ -32,7 +32,7 @@ export const createBaseUri = ({ protocol, hostname, url }: Request) => {
     const indexLastSlash = basePath.lastIndexOf('/');
     if (indexLastSlash > 0) {
         const idStr = basePath.slice(indexLastSlash + 1);
-        if (BuchReadService.ID_PATTERN.test(idStr)) {
+        if (SupplementReadService.ID_PATTERN.test(idStr)) {
             basePath = basePath.slice(0, indexLastSlash);
         }
     }
