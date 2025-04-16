@@ -30,7 +30,7 @@ import { entities } from './entity/entities.js';
  */
 @Module({
     imports: [KeycloakModule, TypeOrmModule.forFeature(entities)],
-    controllers: [BuchGetController, BuchWriteController],
+    controllers: [SupplementGetController, SupplementWriteController],
     // Provider sind z.B. Service-Klassen fuer DI
     providers: [
         SupplementReadService,
