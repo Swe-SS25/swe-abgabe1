@@ -1,16 +1,14 @@
-' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
-'
-' Dieses Diagramm zeigt die Entity-Struktur für Supplements im Stil von TypeORM.
-'
-' Preview durch <Alt>d
-
 @startuml Supplement
+
+' Preview durch <Alt>d
 
 package typeorm {
   class "@Entity" as Entity
   hide Entity circle
   class "@Column" as Column
   hide Column circle
+  class "@PrimaryGeneratedColumn" as PrimaryGeneratedColumn
+  hide PrimaryGeneratedColumn circle
   class "@PrimaryColumn" as PrimaryColumn
   hide PrimaryColumn circle
   class "@OneToMany" as OneToMany
@@ -19,6 +17,8 @@ package typeorm {
   hide OneToOne circle
   class "@JoinColumn" as JoinColumn
   hide JoinColumn circle
+  class "@ManyToOne" as ManyToOne
+  hide ManyToOne circle
   class "@CreateDateColumn" as CreateDateColumn
   hide CreateDateColumn circle
   class "@UpdateDateColumn" as UpdateDateColumn
@@ -26,18 +26,14 @@ package typeorm {
 }
 
 package supplement.entity {
-  class "type SupplementArt = 'PULVER' | 'TABLETTEN'" as SupplementArt
+  class "type supplementArt = 'pulver' | 'tabletten' | 'kapseln'" as SupplementArt
   hide SupplementArt circle
 
-  class "type Rating = 1 | 2 | 3 | 4 | 5" as Rating
-  hide Rating circle
-
   class Supplement <<entity>> <<@Entity>> {
-    @PrimaryColumn() readonly id: number
-    @Column() readonly namen: string
-    @Column("simple-array") readonly menge: string[] ' z.B. "1000g,500g"
-    @Column() readonly art: SupplementArt
-    @Column() readonly rating: Rating
+    @PrimaryGeneratedColumn() readonly id: number
+    @Column() readonly name: string
+    @Column('varchar') readonly portionen: number
+    @Column('varchar') readonly supplementArt: supplementArt
     @CreateDateColumn() readonly erzeugt: Date
     @UpdateDateColumn() readonly aktualisiert: Date
   }
@@ -46,25 +42,25 @@ package supplement.entity {
     @PrimaryColumn() readonly id: number
     @Column() readonly bezeichnung: string
     @Column() readonly path: string
-    @ManyToOne(() => Supplement) supplement: Supplement
+    @ManyToOne(() => Supplement) @JoinColumn() supplement: Supplement
   }
 
   class Beschreibung <<entity>> <<@Entity>> {
     @PrimaryColumn() readonly id: number
     @Column() readonly info: string
     @Column() readonly vorteile: string
-    @Column() readonly dosierempfehlung: string
-    @OneToOne(() => Supplement) @JoinColumn() supplement: Supplement
+    @Column() readonly dosieremphehlug: string
+    @OneToOne(() => Supplement) @JoinColumn() supplment: Supplement
   }
 
-  Supplement *--> "*" Produktbild : @OneToMany() \nproduktbilder
-  Supplement *--> "1" Beschreibung : @OneToOne() \nbeschreibung
+  Supplement *--> "*" Produktbild : @OneToMany()\nproduktbilder
+  Supplement *--> "1" Beschreibung : @OneToOne()\nbeschreibung
 
   Supplement .right.> Entity
   Supplement .right.> SupplementArt
-  Supplement .right.> Rating
 }
 
 hide empty members
+
 
 @enduml

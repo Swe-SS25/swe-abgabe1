@@ -1,0 +1,41 @@
+@startuml ER Diagramm Supplement
+
+' Preview durch <Alt>d
+
+' hide the spot
+hide circle
+
+skinparam linetype ortho
+
+entity "Supplement" {
+  * id: integer <<generated>>
+  --
+  * name: text
+  * portionen: number
+  * supplementArt: text
+  * erzeugt: timestamp
+  * aktualisiert: timestamp
+}
+
+entity "Beschreibung" {
+  * id: integer <<generated>>
+  --
+  * info: text
+  * vorteile: text
+  * dosieremphehlug: text
+  * **supplement_id**: integer <<FK>>
+}
+
+entity "Produktbild" {
+  * id: integer <<generated>>
+  --
+  * bezeichnung: text
+  * path: text
+  * **supplement_id**: integer <<FK>>
+}
+
+Supplement ||--|| Beschreibung
+Supplement ||--o{ Produktbild
+
+
+@enduml
