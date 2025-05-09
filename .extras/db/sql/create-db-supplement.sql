@@ -72,12 +72,12 @@
 -- * Schluessellaenge 2048 Bit
 
 -- https://www.postgresql.org/docs/current/sql-createrole.html
-CREATE ROLE buch LOGIN PASSWORD 'p';
+CREATE ROLE supplement LOGIN PASSWORD 'p';
 
 -- https://www.postgresql.org/docs/current/sql-createdatabase.html
-CREATE DATABASE buch;
+CREATE DATABASE supplement;
 
-GRANT ALL ON DATABASE buch TO buch;
+GRANT ALL ON DATABASE supplement TO supplement;
 
 -- https://www.postgresql.org/docs/10/sql-createtablespace.html
-CREATE TABLESPACE buchspace OWNER buch LOCATION '/var/lib/postgresql/tablespace/buch';
+CREATE TABLESPACE supplementspace OWNER supplement LOCATION '/var/lib/postgresql/tablespace/supplement';

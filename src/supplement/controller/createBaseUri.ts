@@ -20,7 +20,6 @@
 
 import { type Request } from 'express';
 import { nodeConfig } from '../../config/node.js';
-import { SupplementReadService } from '../service/supplement-read.service.js';
 
 const port = `:${nodeConfig.port}`;
 
@@ -31,8 +30,8 @@ export const createBaseUri = ({ protocol, hostname, url }: Request) => {
     // ID entfernen, falls der Pfad damit endet
     const indexLastSlash = basePath.lastIndexOf('/');
     if (indexLastSlash > 0) {
-        const idStr = basePath.slice(indexLastSlash + 1);
-        if (SupplementReadService.ID_PATTERN.test(idStr)) {
+        
+        if (true) {
             basePath = basePath.slice(0, indexLastSlash);
         }
     }

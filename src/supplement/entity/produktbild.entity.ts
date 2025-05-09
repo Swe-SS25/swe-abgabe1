@@ -1,17 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { Supplement } from "./supplement.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Supplement } from "./supplement.entity.js";
 
 @Entity()
 export class Produktbild{
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     readonly id: number | undefined;
 
-    @Column()
+    @Column('varchar')
     @ApiProperty({})
     readonly bezeichnung!: string
 
-    @Column()
+    @Column('varchar')
     @ApiProperty({})
     readonly path: String | undefined;
 

@@ -42,7 +42,7 @@ import {
  */
 @Injectable()
 export class DbPopulateService implements OnApplicationBootstrap {
-    readonly #tabellen = ['buch', 'titel', 'abbildung'];
+    readonly #tabellen = ['supplement', 'beschreibung', 'produktbild'];
 
     readonly #datasource: DataSource;
 
@@ -110,12 +110,6 @@ export class DbPopulateService implements OnApplicationBootstrap {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `SET search_path TO ${adminDataSourceOptions!.database};`,
         );
-        const copyStmt =
-            "COPY %TABELLE% FROM '/csv/%TABELLE%.csv' (FORMAT csv, DELIMITER ';', HEADER true);";
-        for (const tabelle of this.#tabellen) {
-            // eslint-disable-next-line unicorn/prefer-string-replace-all
-            await dataSource.query(copyStmt.replace(/%TABELLE%/gu, tabelle));
-        }
         await dataSource.destroy();
     }
 

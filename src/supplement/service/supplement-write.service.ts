@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Supplement } from '../entity/supplement.entity';
-import { getLogger } from '../../logger/logger';
+import { Supplement } from '../entity/supplement.entity.js';
+import { getLogger } from '../../logger/logger.js';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

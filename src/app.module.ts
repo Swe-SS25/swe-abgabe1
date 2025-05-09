@@ -24,10 +24,11 @@ import { DevModule } from './config/dev/dev.module.js';
 import { GraphQLModule } from '@nestjs/graphql';
 import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { graphQlModuleOptions } from './config/graphql.js';
 import { typeOrmModuleOptions } from './config/typeormOptions.js';
 import { SupplementModule } from './supplement/supplement.module.js';
+import { SupplementWriteController } from './supplement/controller/supplement-write.controller.js';
 
 @Module({
     imports: [
@@ -40,6 +41,12 @@ import { SupplementModule } from './supplement/supplement.module.js';
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(RequestLoggerMiddleware).forRoutes('auth', 'graphql');
+        consumer
+            .apply(RequestLoggerMiddleware)
+            .forRoutes(
+                SupplementWriteController,
+                'auth',
+                'graphql'
+            );
     }
 }

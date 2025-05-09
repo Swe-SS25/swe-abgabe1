@@ -1,18 +1,18 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
-import { Supplement } from "./supplement.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Supplement } from "./supplement.entity.js";
 
 @Entity()
 export class Beschreibung {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     readonly id : number | undefined;
 
-    @Column()
+    @Column('varchar')
     readonly info : string | undefined;
 
-    @Column()
+    @Column('varchar')
     readonly vorteile: string | undefined;
 
-    @Column()
+    @Column('varchar')
     readonly dosieremphehlug: string | undefined;
 
     @OneToOne(() => Supplement, (supplement) => supplement.beschreibung)

@@ -21,7 +21,7 @@ import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { SupplementWriteService } from '../service/supplement-write.service.js';
-import { Supplement } from '../entity/supplement.entity';
+import { Supplement } from '../entity/supplement.entity.js';
 import { createBaseUri } from './createBaseUri.js';
 
 const MSG_FORBIDDEN = 'Kein Token mit ausreichender Berechtigung vorhanden';
@@ -38,7 +38,7 @@ export class SupplementWriteController {
     readonly #service: SupplementWriteService;
 
     readonly #logger = getLogger(SupplementWriteController.name);
-    
+
     constructor(service: SupplementWriteService) {
         this.#service = service;
     }

@@ -8,8 +8,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Beschreibung } from './beschreibung.entity';
-import { Produktbild } from './produktbild.entity';
+import { Beschreibung } from './beschreibung.entity.js';
+import { Produktbild } from './produktbild.entity.js';
 
 
 export type supplementArt = 'pulver' | 'tabletten' | 'kapseln'
@@ -24,7 +24,7 @@ export class Supplement {
     readonly version: number | undefined;
     */
 
-    @Column()
+    @Column('varchar')
     @ApiProperty({})
     readonly name!: string;
 

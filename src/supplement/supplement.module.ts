@@ -22,7 +22,7 @@ import { SupplementWriteController } from './controller/supplement-write.control
 
 /**
  * Das Modul besteht aus Controller- und Service-Klassen für die Verwaltung von
- * Bücher.
+ * Supplements.
  * @packageDocumentation
  */
 
