@@ -19,6 +19,9 @@ import { KeycloakModule } from '../security/keycloak/keycloak.module.js';
 import { entities } from './entity/entities.js';
 import { SupplementWriteService } from './service/supplement-write.service.js';
 import { SupplementWriteController } from './controller/supplement-write.controller.js';
+import { SupplementReadService } from './service/supplement-read.service.js';
+import { SupplementGetController } from './controller/supplement-get.controller.js';
+import { QueryBuilder } from './service/query-builder.js';
 
 /**
  * Das Modul besteht aus Controller- und Service-Klassen für die Verwaltung von
@@ -32,12 +35,14 @@ import { SupplementWriteController } from './controller/supplement-write.control
  */
 @Module({
     imports: [KeycloakModule, TypeOrmModule.forFeature(entities)],
-    controllers: [SupplementWriteController],
+    controllers: [SupplementWriteController, SupplementGetController],
     // Provider sind z.B. Service-Klassen fuer DI
     providers: [
         SupplementWriteService,
+        SupplementReadService,
+        QueryBuilder,
     ],
     // Export der Provider fuer DI in anderen Modulen
-    exports: [SupplementWriteService],
+    exports: [SupplementWriteService, SupplementReadService],
 })
 export class SupplementModule {}

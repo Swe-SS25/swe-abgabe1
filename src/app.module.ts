@@ -20,15 +20,16 @@ import {
     type NestModule,
 } from '@nestjs/common';
 import { type ApolloDriverConfig } from '@nestjs/apollo';
-import { DevModule } from './config/dev/dev.module.js';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
+import { DevModule } from './config/dev/dev.module.js';
 import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
-import { TypeOrmModule } from '@nestjs/typeorm'
 import { graphQlModuleOptions } from './config/graphql.js';
 import { typeOrmModuleOptions } from './config/typeormOptions.js';
 import { SupplementModule } from './supplement/supplement.module.js';
 import { SupplementWriteController } from './supplement/controller/supplement-write.controller.js';
+import { SupplementGetController } from './supplement/controller/supplement-get.controller.js';
 
 @Module({
     imports: [
@@ -45,8 +46,9 @@ export class AppModule implements NestModule {
             .apply(RequestLoggerMiddleware)
             .forRoutes(
                 SupplementWriteController,
+                SupplementGetController,
                 'auth',
-                'graphql'
+                'graphql',
             );
     }
 }

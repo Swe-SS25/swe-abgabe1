@@ -32,8 +32,8 @@ END $$;
 -- 2)  Haupttabelle supplement
 -------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS supplement.supplement (
-    id              integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-
+    id              integer GENERATED ALWAYS AS IDENTITY(START WITH 1000) PRIMARY KEY USING INDEX TABLESPACE supplementspace,
+    version         integer NOT NULL DEFAULT 0,
     name            varchar NOT NULL,
     portionen       varchar,
     supplement_art  supplement.supplement_art,   -- snake_case Spaltenname

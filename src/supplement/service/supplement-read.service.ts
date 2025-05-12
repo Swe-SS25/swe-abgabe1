@@ -1,33 +1,39 @@
-import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Supplement } from "../entity/supplement.entity";
-import { getLogger } from "../../logger/logger";
-import { InjectRepository } from "@nestjs/typeorm";
+import { getLogger } from "../../logger/logger.js";
+import { QueryBuilder } from './query-builder.js';
 
 export type FindByIDParams = {
     readonly id: number;
+    readonly mitProduktbildern?: boolean;
 };
 
 @Injectable()
 export class SupplementReadService {
     static readonly ID_PATTERN = /^[1-9]\d{0,10}$/u;
 
-    readonly #fileRepo: Repository<Supplement>;
+    readonly #queryBuilder: QueryBuilder;
     
     readonly #logger = getLogger(SupplementReadService.name);
 
     constructor(
-        @InjectRepository(Supplement) fileRepo: Repository<Supplement>
+        queryBuilder: QueryBuilder,
     ){
-        this.#fileRepo = fileRepo;
+        this.#queryBuilder = queryBuilder;
     }
 
     async findById({
-        id
+        id, mitProduktbildern = false
     }: FindByIDParams): Promise<Readonly<Supplement>>{
         this.#logger.debug('findById: id=%d', id);
 
-        const supplement = await t
+        const supplement = await this.#queryBuilder
+            .buildId({ id, mitProduktbildern })
+            .getOne();
+
+            if (supplement === null) {
+                throw new NotFoundException(`Es gibt kein Buch mit der ID ${id}.`);
+            }
 
         return supplement;
     }

@@ -7,22 +7,21 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
+    VersionColumn,
 } from 'typeorm';
 import { Beschreibung } from './beschreibung.entity.js';
 import { Produktbild } from './produktbild.entity.js';
 
 
-export type supplementArt = 'pulver' | 'tabletten' | 'kapseln'
+export type SupplementArt = 'pulver' | 'tabletten' | 'kapseln'
 
 @Entity()
 export class Supplement {
     @PrimaryGeneratedColumn()
     readonly id: number | undefined;
 
-    /*
     @VersionColumn()
     readonly version: number | undefined;
-    */
 
     @Column('varchar')
     @ApiProperty({})
@@ -34,7 +33,7 @@ export class Supplement {
 
     @Column('varchar')
     @ApiProperty({})
-    readonly supplementArt: supplementArt | undefined;
+    readonly supplementArt: SupplementArt | undefined;
 
     @OneToOne(() => Beschreibung, (beschreibung) => beschreibung.supplment, {
         cascade: ['insert', 'remove'],
