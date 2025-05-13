@@ -1,145 +1,133 @@
-# Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-# siehe app.module.ts
-
 schema {
   query: Query
   mutation: Mutation
 }
 
-"Funktionen, um Bücherdaten zu lesen"
+"""Abfrageoperationen für Supplements"""
 type Query {
-  buecher(suchkriterien: SuchkriterienInput): [Buch!]
+  """Alle Supplements abrufen mit optionalen Suchkriterien"""
+  supplements(suchkriterien: SuchkriterienInput): [Supplement!]!
 
-  buch(id: ID!): Buch
+  """Ein einzelnes Supplement nach ID"""
+  supplement(id: ID!): Supplement
 }
 
-"Funktionen, um Bücher neu anzulegen, zu aktualisieren oder zu löschen"
+"""Mutationen zum Erstellen, Aktualisieren und Löschen von Supplements sowie Auth"""
 type Mutation {
-  create(input: BuchInput!): CreatePayload
+  """Ein neues Supplement anlegen"""
+  create(input: SupplementInput!): CreatePayload!
 
-  update(input: BuchUpdateInput!): UpdatePayload
+  """Ein Supplement aktualisieren"""
+  update(input: SupplementUpdateInput!): UpdatePayload!
 
-  delete(id: ID!): Boolean
+  """Ein Supplement löschen"""
+  delete(id: ID!): Boolean!
 
-  # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
-  token(username: String!, password: String!): TokenResult
-  refresh(refresh_token: String!): TokenResult
+  """Login-Token anfordern"""
+  token(username: String!, password: String!): TokenResult!
+
+  """Access-Token mit Refresh-Token erneuern"""
+  refresh(refresh_token: String!): TokenResult!
 }
 
-"Daten zum Titel eines Buches"
-type Titel {
-  titel: String!
-  untertitel: String
-}
-
-"Daten zum Titel eines Buches"
-type Abbildung {
-  beschriftung: String!
-  contentType: String
-}
-
-"Datenschema zu einem Buch, das gelesen wird"
-type Buch {
-  # ID ist bei Apollo ein String
+"""Supplement mit Beschreibung und Bildern"""
+type Supplement {
   id: Int!
-  version: Int!
-  isbn: String!
-  rating: Int
-  art: Art
-  preis: Float!
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
-  # 1:1-Beziehung
-  titel: Titel!
-  # field mit @ResolveField
-  rabatt(short: Boolean): String!
+  name: String!
+  menge: Menge
+  supplementArt: SupplementArt
+  beschreibung: Beschreibung
+  produktbilder: [Produktbild!]
+  erzeugt: DateTime
+  aktualisiert: DateTime
 }
 
-"Enum-Typ für die Art eines Buches"
-enum Art {
-  EPUB
-  HARDCOVER
-  PAPERBACK
+"""Zusätzliche Information über ein Supplement"""
+type Beschreibung {
+  id: Int!
+  info: String
+  vorteile: String
+  dosieremphehlug: String
 }
 
-"Suchkriterien für Bücher"
+"""Produktbild eines Supplements"""
+type Produktbild {
+  id: Int!
+  bezeichnung: String!
+  path: String
+}
+
+"""Darreichungsform des Supplements"""
+enum SupplementArt {
+  PULVER
+  TABLETTEN
+  KAPSELN
+}
+
+"""Verfügbare Packungsgrößen"""
+enum Menge {
+  MENGE_250G
+  MENGE_500G
+  MENGE_750G
+  MENGE_1000G
+}
+
+"""Suchkriterien für Supplements"""
 input SuchkriterienInput {
-  titel: String
-  isbn: String
-  rating: Int
-  art: Art
-  lieferbar: Boolean
+  name: String
+  supplementArt: SupplementArt
+  menge: Menge
 }
 
-"Daten zum Titel eines neuen Buches"
-input TitelInput {
-  titel: String!
-  untertitel: String
+"""Eingabedaten zur Erstellung eines Supplements"""
+input SupplementInput {
+  name: String!
+  menge: Menge
+  supplementArt: SupplementArt
+  beschreibung: BeschreibungInput
+  produktbilder: [ProduktbildInput!]
 }
 
-"Daten zu den Abbildungen eines Buches"
-input AbbildungInput {
-  beschriftung: String!
-  contentType: String!
+"""Eingabedaten zur Aktualisierung eines Supplements"""
+input SupplementUpdateInput {
+  id: ID!
+  name: String
+  menge: Menge
+  supplementArt: SupplementArt
+  beschreibung: BeschreibungInput
+  produktbilder: [ProduktbildInput!]
 }
 
-"Daten für ein neues Buch"
-input BuchInput {
-  isbn: String
-  rating: Int
-  art: Art
-  preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
-  titel: TitelInput!
-  abbildungen: [AbbildungInput!]
+"""Eingabedaten für eine Beschreibung"""
+input BeschreibungInput {
+  info: String
+  vorteile: String
+  dosieremphehlug: String
 }
 
+"""Eingabedaten für ein Produktbild"""
+input ProduktbildInput {
+  bezeichnung: String!
+  path: String
+}
+
+"""Rückgabe nach Erstellen eines Supplements"""
 type CreatePayload {
-  id: Int
+  id: Int!
 }
 
-"Daten für ein zu änderndes Buch"
-input BuchUpdateInput {
-  id: ID
-  version: Int
-  isbn: String
-  rating: Int
-  art: Art
-  preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
-  homepage: String
-  schlagwoerter: [String]
-}
-
+"""Rückgabe nach Aktualisieren eines Supplements"""
 type UpdatePayload {
-  version: Int
+  success: Boolean!
+  updatedId: Int
 }
 
+"""Zugriffs- und Erneuerungstoken für Authentifizierung"""
 type TokenResult {
-  access_token: String!
-  expires_in: Int!
-  refresh_token: String!
-  refresh_expires_in: Int!
+  accessToken: String!
+  refreshToken: String!
+  expiresIn: Int!
 }
+
+"""Benutzerdefinierter Skalartyp für ISO-8601 Zeitstempel"""
+scalar DateTime
