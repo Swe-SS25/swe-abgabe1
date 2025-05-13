@@ -1,13 +1,48 @@
-import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { getLogger } from "../../logger/logger.js";
-import { Controller, Get, HttpStatus, Param, ParseIntPipe, Req, Res, UseInterceptors, Headers } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Param, ParseIntPipe, Req, Res, UseInterceptors, Headers, Query } from "@nestjs/common";
 import { paths } from "../../config/paths.js";
 import { ResponseTimeInterceptor } from "../../logger/response-time.interceptor.js";
 import { SupplementReadService } from "../service/supplement-read.service.js";
 import { Public } from "nest-keycloak-connect";
 import { Supplement } from "../entity/supplement.entity.js";
 import { Request, Response } from 'express';
+import { Suchkriterien } from "../service/suchkriterien.js";
+import { SupplementArt } from '../entity/supplement.entity.js';
+import { createPage } from "./page.js";
+import { createPageable } from "../service/pageable.js";
 
+/**
+ * Klasse für `BuchGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
+ * formulieren. `BuchController` hat dieselben Properties wie die Basisklasse
+ * `Buch` - allerdings mit dem Unterschied, dass diese Properties beim Ableiten
+ * so überschrieben sind, dass sie auch nicht gesetzt bzw. undefined sein
+ * dürfen, damit die Queries flexibel formuliert werden können. Deshalb ist auch
+ * immer der zusätzliche Typ undefined erforderlich.
+ * Außerdem muss noch `string` statt `Date` verwendet werden, weil es in OpenAPI
+ * den Typ Date nicht gibt.
+ */
+export class SupplementQuery implements Suchkriterien {
+    @ApiProperty({ required: false })
+    declare readonly name?: string;
+  
+    /** Darreichungsform: pulver | tabletten | kapseln */
+    @ApiProperty({ required: false, enum: ['pulver', 'tabletten', 'kapseln'] })
+    declare readonly supplementArt?: SupplementArt;
+  
+    @ApiProperty({ required: false, description: 'Anzahl der Portionen' })
+    declare readonly portionen?: string;
+  
+    @ApiProperty({ required: false })
+    declare readonly beschreibung?: string;
+    
+    @ApiProperty({ required: false })
+    declare size?: string;
+
+    @ApiProperty({ required: false })
+    declare page?: string;
+
+}
 
 /**
  * Die Controller-Klasse für die Verwaltung von Supplements.
@@ -96,5 +131,58 @@ export class SupplementGetController {
 
         this.#logger.debug('getById: supplement=%o', supplement);
         return res.json(supplement);
+    }
+
+    /**
+     * Supplements werden mit Query-Parametern asynchron gesucht. Falls es mindestens
+     * ein solches Supplement gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
+     * des Response ist das JSON-Array mit den gefundenen Supplements, die jeweils
+     * um Atom-Links für HATEOAS ergänzt sind.
+     *
+     * Falls es kein Supplement zu den Suchkriterien gibt, wird der Statuscode `404`
+     * (`Not Found`) gesetzt.
+     *
+     * Falls es keine Query-Parameter gibt, werden alle Supplements ermittelt.
+     *
+     * @param query Query-Parameter von Express.
+     * @param req Request-Objekt von Express.
+     * @param res Leeres Response-Objekt von Express.
+     * @returns Leeres Promise-Objekt.
+     */
+    @Get()
+    @Public()
+    @ApiOperation({ summary: 'Suche mit Suchkriterien' })
+    @ApiOkResponse({ description: 'Eine evtl. leere Liste mit Supplements' })
+    async get(
+        @Query() query: SupplementQuery,
+        @Req() req: Request,
+        @Res() res: Response,
+    ): Promise<Response<Supplement[] | undefined>> {
+        this.#logger.debug('get: query=%o', query);
+
+        if (req.accepts(['json', 'html']) === false) {
+            this.#logger.debug('get: accepted=%o', req.accepted);
+            return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        const { page, size } = query;
+        delete query['page'];
+        delete query['size'];
+        this.#logger.debug('get: page=%s, size=%s', page, size);
+
+        const keys = Object.keys(query) as (keyof SupplementQuery)[];
+        keys.forEach((key) => {
+            if (query[key] === undefined) {
+                delete query[key];
+            }
+        });
+        this.#logger.debug('get: query=%o', query);
+        
+        const pageable = createPageable({ number: page, size });
+        const supplementSlice = await this.#service.find(query, pageable);
+        const supplementPage = createPage(supplementSlice, pageable);
+        this.#logger.debug('get: supplementPage=%o', supplementPage);
+
+        return res.json(supplementPage).send();
     }
 }
