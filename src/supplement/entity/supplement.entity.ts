@@ -35,7 +35,7 @@ export class Supplement {
     @ApiProperty({})
     readonly supplementArt: SupplementArt | undefined;
 
-    @OneToOne(() => Beschreibung, (beschreibung) => beschreibung.supplment, {
+    @OneToOne(() => Beschreibung, (beschreibung) => beschreibung.supplement, {
         cascade: ['insert', 'remove'],
     })
     readonly beschreibung: Beschreibung | undefined;

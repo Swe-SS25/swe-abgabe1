@@ -1,7 +1,14 @@
 import {
     Body,
     Controller,
+    Delete,
+    Headers,
+    HttpCode,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
     Post,
+    Put,
     Req,
     Res,
     UseGuards,
@@ -12,7 +19,11 @@ import {
     ApiBearerAuth,
     ApiCreatedResponse,
     ApiForbiddenResponse,
+    ApiHeader,
+    ApiNoContentResponse,
     ApiOperation,
+    ApiPreconditionFailedResponse,
+    ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
 import {  Request, Response } from 'express';
@@ -23,6 +34,9 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { SupplementWriteService } from '../service/supplement-write.service.js';
 import { Supplement } from '../entity/supplement.entity.js';
 import { createBaseUri } from './createBaseUri.js';
+import { Beschreibung } from '../entity/beschreibung.entity.js';
+import { Produktbild } from '../entity/produktbild.entity';
+import { SupplementDTO, SupplementDtoOhneRef } from './supplementDTO.entity.js';
 
 const MSG_FORBIDDEN = 'Kein Token mit ausreichender Berechtigung vorhanden';
 
@@ -54,7 +68,7 @@ export class SupplementWriteController {
      * gesetzt und genauso auch wenn der Titel oder die ISBN-Nummer bereits
      * existieren.
      *
-     * @param SupplementDTO JSON-Daten für ein Supplement im Request-Body.
+     * @param supplementDTO JSON-Daten für ein Supplement im Request-Body.
      * @param req: Request-Objekt von Express für den Location-Header.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
@@ -66,16 +80,167 @@ export class SupplementWriteController {
     @ApiBadRequestResponse({ description: 'Fehlerhafte Supplementdaten' })
     @ApiForbiddenResponse({ description: MSG_FORBIDDEN })
     async post(
-        @Body() Supplement: Supplement,
+        @Body() supplementDTO: SupplementDTO,
         @Req() req: Request,
         @Res() res: Response,
     ): Promise<Response> {
-        this.#logger.debug('post: SupplementDTO=%o', Supplement);
+        this.#logger.debug('post: supplementDTO=%o', supplementDTO);
 
-        const id = await this.#service.create(Supplement);
+        const supplement = this.#supplementDTOtoSupplement(supplementDTO);
+        const id = await this.#service.create(supplement);
 
         const location = `${createBaseUri(req)}/${id}`;
         this.#logger.debug('post: location=%s', location);
         return res.location(location).send();
+    }
+
+    /**
+     * Ein vorhandenes Buch wird asynchron aktualisiert.
+     *
+     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Buches
+     * als Pfad-Parameter enthalten sein. Außerdem muss im Rumpf das zu
+     * aktualisierende Buch als JSON-Datensatz enthalten sein. Damit die
+     * Aktualisierung überhaupt durchgeführt werden kann, muss im Header
+     * `If-Match` auf die korrekte Version für optimistische Synchronisation
+     * gesetzt sein.
+     *
+     * Bei erfolgreicher Aktualisierung wird der Statuscode `204` (`No Content`)
+     * gesetzt und im Header auch `ETag` mit der neuen Version mitgeliefert.
+     *
+     * Falls die Versionsnummer fehlt, wird der Statuscode `428` (`Precondition
+     * required`) gesetzt; und falls sie nicht korrekt ist, der Statuscode `412`
+     * (`Precondition failed`). Falls Constraints verletzt sind, wird der
+     * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn der neue
+     * Titel oder die neue ISBN-Nummer bereits existieren.
+     *
+     * @param buchDTO Buchdaten im Body des Request-Objekts.
+     * @param id Pfad-Paramater für die ID.
+     * @param version Versionsnummer aus dem Header _If-Match_.
+     * @param res Leeres Response-Objekt von Express.
+     * @returns Leeres Promise-Objekt.
+     */
+    // eslint-disable-next-line max-params
+    @Put(':id')
+    @Roles({ roles: ['admin', 'user'] })
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiOperation({ summary: 'Ein vorhandenes Supplement aktualisieren' })
+    @ApiHeader({
+        name: 'If-Match',
+        description: 'Header für optimistische Synchronisation',
+        required: false,
+    })
+    @ApiNoContentResponse({ description: 'Erfolgreich aktualisiert' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Buchdaten' })
+    @ApiPreconditionFailedResponse({
+        description: 'Falsche Version im Header "If-Match"',
+    })
+    @ApiResponse({
+        status: HttpStatus.PRECONDITION_REQUIRED,
+        description: 'Header "If-Match" fehlt',
+    })
+    @ApiForbiddenResponse({ description: MSG_FORBIDDEN })
+    async put(
+        @Body() supplementDTO: SupplementDtoOhneRef,
+        @Param(
+            'id',
+            new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }),
+        )
+        id: number,
+        @Headers('If-Match') version: string | undefined,
+        @Res() res: Response,
+    ): Promise<Response> {
+        this.#logger.debug(
+            'put: id=%s, supplementDTO=%o, version=%s',
+            id,
+            supplementDTO,
+            version,
+        );
+
+        if (version === undefined) {
+            const msg = 'Header "If-Match" fehlt';
+            this.#logger.debug('put: msg=%s', msg);
+            return res
+                .status(HttpStatus.PRECONDITION_REQUIRED)
+                .set('Content-Type', 'application/json')
+                .send(msg);
+        }
+
+        const supplement = this.#supplementDtoOhneRefToSupplement(supplementDTO);
+        const neueVersion = await this.#service.update({ id, supplement, version });
+        this.#logger.debug('put: version=%d', neueVersion);
+        return res.header('ETag', `"${neueVersion}"`).send();
+    }
+
+
+    /**
+     * Ein Supplement wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
+     * ist. Der zurückgelieferte Statuscode ist `204` (`No Content`).
+     *
+     * @param id Pfad-Paramater für die ID.
+     * @returns Leeres Promise-Objekt.
+     */
+    @Delete(':id')
+    @Roles({ roles: ['admin'] })
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiOperation({ summary: 'Supplement mit der ID löschen' })
+    @ApiNoContentResponse({
+        description: 'Das Supplement wurde gelöscht oder war nicht vorhanden',
+    })
+    @ApiForbiddenResponse({ description: MSG_FORBIDDEN })
+    async delete(@Param('id') id: number) {
+        this.#logger.debug('delete: id=%s', id);
+        await this.#service.delete(id);
+    }
+
+    #supplementDTOtoSupplement(supplementDTO: SupplementDTO): Supplement {
+        const beschreibungDTO = supplementDTO.beschreibung;
+        const beschreibung: Beschreibung = {
+            id: undefined,
+            info: beschreibungDTO?.info,
+            vorteile: beschreibungDTO?.vorteile,
+            dosierempfehlung: beschreibungDTO?.dosierempfehlung,
+            supplement: undefined,
+        };
+        const produktbilder = supplementDTO.produktbilder?.map((produktbildDTO) => {
+            const produktbild: Produktbild = {
+                id: undefined,
+                bezeichnung: produktbildDTO.bezeichnung,
+                path: produktbildDTO.path,
+                supplement: undefined,
+            };
+            return produktbild;
+        });
+        const supplement = {
+            id: undefined,
+            version: undefined,
+            name: supplementDTO.name,
+            portionen: supplementDTO.portionen,
+            supplementArt: supplementDTO.supplementArt,
+            beschreibung,
+            produktbilder,
+            erzeugt: new Date(),
+            aktualisiert: new Date(),
+        };
+
+        // Rueckwaertsverweise
+        supplement.beschreibung.supplement = supplement;
+        supplement.produktbilder?.forEach((produktbild) => {
+            produktbild.supplement = supplement;
+        });
+        return supplement;
+    }
+
+    #supplementDtoOhneRefToSupplement(supplementDTO: SupplementDtoOhneRef): Supplement {
+        return {
+            id: undefined,
+            version: undefined,
+            name: supplementDTO.name,
+            portionen: supplementDTO.portionen,
+            supplementArt: supplementDTO.supplementArt,
+            beschreibung: undefined,
+            produktbilder: undefined,
+            erzeugt: new Date(),
+            aktualisiert: new Date(),
+        };
     }
 }

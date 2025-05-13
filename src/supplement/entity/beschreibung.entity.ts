@@ -13,10 +13,10 @@ export class Beschreibung {
     readonly vorteile: string | undefined;
 
     @Column('varchar')
-    readonly dosieremphehlug: string | undefined;
+    readonly dosierempfehlung: string | undefined;
 
     @OneToOne(() => Supplement, (supplement) => supplement.beschreibung)
     @JoinColumn({name: 'supplement_id' })
-    supplment: Supplement | undefined;
+    supplement: Supplement | undefined;
 
 }
