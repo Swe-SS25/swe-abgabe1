@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Supplement } from '../entity/supplement.entity';
+import { Supplement } from '../entity/supplement.entity.js';
 import { getLogger } from "../../logger/logger.js";
 import { QueryBuilder } from './query-builder.js';
 import { Suchkriterien } from "./suchkriterien";
@@ -16,6 +16,8 @@ export class SupplementReadService {
     static readonly ID_PATTERN = /^[1-9]\d{0,10}$/u;
 
     readonly #queryBuilder: QueryBuilder;
+
+    readonly #supplementProps: string[];
     
     readonly #logger = getLogger(SupplementReadService.name);
 
@@ -23,6 +25,8 @@ export class SupplementReadService {
         queryBuilder: QueryBuilder,
     ){
         this.#queryBuilder = queryBuilder;
+        const supplementDummy = new Supplement();
+        this.#supplementProps = Object.getOwnPropertyNames(supplementDummy);
     }
 
     /**
@@ -41,7 +45,7 @@ export class SupplementReadService {
             .getOne();
 
             if (supplement === null) {
-                throw new NotFoundException(`Es gibt kein Buch mit der ID ${id}.`);
+                throw new NotFoundException(`Es gibt kein Supplement mit der ID ${id}.`);
             }
 
         return supplement;
@@ -74,7 +78,7 @@ export class SupplementReadService {
         }
 
         // Falsche Namen fuer Suchkriterien?
-        if (!this.#checkEnums(suchkriterien)) {
+        if (!this.#checkKeys(keys) || !this.#checkEnums(suchkriterien)) {
             throw new NotFoundException('Ungueltige Suchkriterien');
         }
 
@@ -82,15 +86,15 @@ export class SupplementReadService {
         // Das Resultat ist eine leere Liste, falls nichts gefunden
         // Lesen: Keine Transaktion erforderlich
         const queryBuilder = this.#queryBuilder.build(suchkriterien, pageable);
-        const buecher = await queryBuilder.getMany();
-        if (buecher.length === 0) {
-            this.#logger.debug('find: Keine Buecher gefunden');
+        const supplements = await queryBuilder.getMany();
+        if (supplements.length === 0) {
+            this.#logger.debug('find: Keine Supplements gefunden');
             throw new NotFoundException(
-                `Keine Buecher gefunden: ${JSON.stringify(suchkriterien)}, Seite ${pageable.number}}`,
+                `Keine Supplements gefunden: ${JSON.stringify(suchkriterien)}, Seite ${pageable.number}}`,
             );
         }
         const totalElements = await queryBuilder.getCount();
-        return this.#createSlice(buecher, totalElements);
+        return this.#createSlice(supplements, totalElements);
     }
 
     async #findAll(pageable: Pageable) {
@@ -110,6 +114,25 @@ export class SupplementReadService {
         };
         this.#logger.debug('createSlice: supplementSlice=%o', supplementSlice);
         return supplementSlice;
+    }
+
+    #checkKeys(keys: string[]) {
+        this.#logger.debug('#checkKeys: keys=%s', keys);
+        // Ist jedes Suchkriterium auch eine Property von Buch oder "schlagwoerter"?
+        let validKeys = true;
+        keys.forEach((key) => {
+            if (
+                !this.#supplementProps.includes(key)
+            ) {
+                this.#logger.debug(
+                    '#checkKeys: ungueltiges Suchkriterium "%s"',
+                    key,
+                );
+                validKeys = false;
+            }
+        });
+
+        return validKeys;
     }
 
     #checkEnums(suchkriterien: Suchkriterien) {

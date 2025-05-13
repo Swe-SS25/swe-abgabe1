@@ -103,13 +103,15 @@ export class QueryBuilder {
     // eslint-disable-next-line max-lines-per-function, prettier/prettier, sonarjs/cognitive-complexity
     build(
         {
+            name,
             beschreibung,
             ...restProps
         }: Suchkriterien,
         pageable: Pageable,
     ) {
         this.#logger.debug(
-            'beschreibung=%s, restProps=%o, pageable=%o',
+            'name=%s, beschreibung=%s, restProps=%o, pageable=%o',
+            name,
             beschreibung,
             restProps,
             pageable,
@@ -120,6 +122,15 @@ export class QueryBuilder {
 
         let useWhere = true;
 
+        if (name !== undefined && typeof name === 'string') {
+            const ilike =
+                typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
+            queryBuilder = queryBuilder.where(
+                `${this.#supplementAlias}.name ${ilike} :name`,
+                { name: `%${name}%` },
+            );
+            useWhere = false;
+        }
         // Beschreibung in der Query: Teilstring der Beschreibung und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
         // type-coverage:ignore-next-line
