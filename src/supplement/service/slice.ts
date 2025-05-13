@@ -1,4 +1,4 @@
-// Copyright (C) 2016 - present Juergen Zimmermann, Hochschule Karlsruhe
+// Copyright (C) 2024 - present Juergen Zimmermann, Hochschule Karlsruhe
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,21 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Das Modul besteht aus der Klasse {@linkcode Suchkriterien}.
- * @packageDocumentation
- */
-
-import { type SupplementArt } from './../entity/supplement.entity.js';
-
-/**
- * Typdefinition für `find` in `supplement-read.service` und `QueryBuilder.build()`.
- */
-export interface Suchkriterien {
-    readonly name?: string;
-    readonly portionen?: string;
-    readonly art?: SupplementArt;
-    readonly beschreibung?: string;
-    readonly size?: string;
-    readonly page?: string;
-}
+export type Slice<T> = {
+    readonly content: T[];
+    readonly totalElements: number;
+};
