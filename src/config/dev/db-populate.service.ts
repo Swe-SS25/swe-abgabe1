@@ -100,6 +100,11 @@ export class DbPopulateService implements OnApplicationBootstrap {
         const createStatements = readFileSync(createScript, 'utf8'); // eslint-disable-line security/detect-non-literal-fs-filename,n/no-sync
         await this.#datasource.query(createStatements);
 
+        const insertScript = path.resolve(this.#dbDir, 'insert.sql');
+        this.#logger.debug('insertScript = %s', insertScript);
+        const insertStatements = readFileSync(insertScript, 'utf8');
+        await this.#datasource.query(insertStatements);
+
         // COPY zum Laden von CSV-Dateien erfordert Administrationsrechte
         // https://www.postgresql.org/docs/current/sql-copy.html
 

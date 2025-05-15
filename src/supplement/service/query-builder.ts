@@ -75,7 +75,7 @@ export class QueryBuilder {
         // Fetch-Join: aus QueryBuilder "supplement" die Property "beschreibung" ->  Tabelle "beschreibung"
         queryBuilder.innerJoinAndSelect(
             `${this.#supplementAlias}.beschreibung`,
-            this.#produktbildAlias,
+            this.#beschreibungAlias,
         );
 
         if (mitProduktbildern) {

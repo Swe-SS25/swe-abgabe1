@@ -22,16 +22,15 @@ export class SupplementQueryResolver {
 
     constructor(service: SupplementReadService) {
         this.#service = service;
-        console.log('🚀 SupplementQueryResolver wurde geladen');
     }
 
     @Query(() => Supplement, {name: 'supplement'})
     @Public()
     async findById(@Args() { id }: IdInput) {
-        console.log('✅ findById() wurde aufgerufen');
+        console.log('Typ von id:', typeof id);
 
-        this.#logger.debug('findById: id=%d', id);
-
+        this.#logger.debug('findById: id=%d', id);    
+        
         const supplement = await this.#service.findById({ id })
 
         if(this.#logger.isLevelEnabled('debug')){

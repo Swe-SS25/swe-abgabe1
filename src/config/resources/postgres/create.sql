@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS supplement.supplement (
     id              integer GENERATED ALWAYS AS IDENTITY(START WITH 1000) PRIMARY KEY USING INDEX TABLESPACE supplementspace,
     version         integer NOT NULL DEFAULT 0,
     name            varchar NOT NULL,
-    portionen       varchar,
+    portionen       integer,
     supplement_art  supplement.supplement_art,   -- snake_case Spaltenname
 
     erzeugt         timestamp NOT NULL DEFAULT NOW(),
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS supplement.beschreibung (
 
     info                  varchar,
     vorteile              varchar,
-    dosieremphehlug       varchar,
+    dosierempfehlung       varchar,
 
     supplement_id         integer NOT NULL UNIQUE
         REFERENCES supplement.supplement(id)

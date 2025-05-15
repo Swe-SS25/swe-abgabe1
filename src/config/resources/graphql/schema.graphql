@@ -34,7 +34,7 @@ type Mutation {
 type Supplement {
   id: Int!
   name: String!
-  menge: Menge
+  portionen: Int
   supplementArt: SupplementArt
   beschreibung: Beschreibung
   produktbilder: [Produktbild!]
@@ -47,7 +47,7 @@ type Beschreibung {
   id: Int!
   info: String
   vorteile: String
-  dosieremphehlug: String
+  dosierempfehlung: String
 }
 
 """Produktbild eines Supplements"""
@@ -64,25 +64,16 @@ enum SupplementArt {
   KAPSELN
 }
 
-"""Verfügbare Packungsgrößen"""
-enum Menge {
-  MENGE_250G
-  MENGE_500G
-  MENGE_750G
-  MENGE_1000G
-}
-
 """Suchkriterien für Supplements"""
 input SuchkriterienInput {
   name: String
   supplementArt: SupplementArt
-  menge: Menge
 }
 
 """Eingabedaten zur Erstellung eines Supplements"""
 input SupplementInput {
   name: String!
-  menge: Menge
+  portionen: Int
   supplementArt: SupplementArt
   beschreibung: BeschreibungInput
   produktbilder: [ProduktbildInput!]
@@ -92,7 +83,7 @@ input SupplementInput {
 input SupplementUpdateInput {
   id: ID!
   name: String
-  menge: Menge
+  portionen: Int
   supplementArt: SupplementArt
   beschreibung: BeschreibungInput
   produktbilder: [ProduktbildInput!]
@@ -102,7 +93,7 @@ input SupplementUpdateInput {
 input BeschreibungInput {
   info: String
   vorteile: String
-  dosieremphehlug: String
+  dosierempfehlung: String
 }
 
 """Eingabedaten für ein Produktbild"""
