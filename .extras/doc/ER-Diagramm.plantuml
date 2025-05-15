@@ -22,7 +22,7 @@ entity "Beschreibung" {
   --
   * info: text
   * vorteile: text
-  * dosieremphehlug: text
+  * dosierempfehlung: text
   * **supplement_id**: integer <<FK>>
 }
 
