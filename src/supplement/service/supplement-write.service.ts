@@ -103,7 +103,7 @@ export class SupplementWriteService {
             id,
             mitProduktbildern: true,
         });
-
+        console.log(supplement);
         let deleteResult: DeleteResult | undefined;
         await this.#repo.manager.transaction(async (transactionalMgr) => {
             // Das Supplement  zur gegebenen ID mit Beschreibung und Pb. asynchron loeschen

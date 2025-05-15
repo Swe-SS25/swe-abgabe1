@@ -79,9 +79,9 @@ export class QueryBuilder {
         );
 
         if (mitProduktbildern) {
-            // Fetch-Join: aus QueryBuilder "buch" die Property "produktbild" -> Tabelle "produktbild"
+            // Fetch-Join: aus QueryBuilder "supplement" die Property "produktbild" -> Tabelle "produktbild"
             queryBuilder.leftJoinAndSelect(
-                `${this.#supplementAlias}.produktbild`,
+                `${this.#supplementAlias}.produktbilder`,
                 this.#produktbildAlias,
             );
         }
