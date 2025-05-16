@@ -11,6 +11,7 @@ import {
     Put,
     Req,
     Res,
+    UploadedFile,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
@@ -22,12 +23,13 @@ import {
     ApiHeader,
     ApiNoContentResponse,
     ApiOperation,
+    ApiParam,
     ApiPreconditionFailedResponse,
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
 import {  Request, Response } from 'express';
-import { AuthGuard, Roles } from 'nest-keycloak-connect';
+import { AuthGuard, Public, Roles } from 'nest-keycloak-connect';
 import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
@@ -37,6 +39,7 @@ import { createBaseUri } from './createBaseUri.js';
 import { Beschreibung } from '../entity/beschreibung.entity.js';
 import { Produktbild } from '../entity/produktbild.entity';
 import { SupplementDTO, SupplementDtoOhneRef } from './supplementDTO.entity.js';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 const MSG_FORBIDDEN = 'Kein Token mit ausreichender Berechtigung vorhanden';
 
@@ -73,6 +76,7 @@ export class SupplementWriteController {
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
+    
     @Post()
     @Roles({ roles: ['admin', 'user'] })
     @ApiOperation({ summary: 'Ein neues Supplement anlegen' })
@@ -95,11 +99,67 @@ export class SupplementWriteController {
     }
 
     /**
-     * Ein vorhandenes Buch wird asynchron aktualisiert.
+     * Zu einem gegebenen Supplement wird eine Binärdatei, z.B. ein Bild, hochgeladen.
+     * Nest realisiert File-Upload mit POST.
+     * https://docs.nestjs.com/techniques/file-upload.
+     * Postman: Body mit "form-data", key: "file" und "File" im Dropdown-Menü
+     * @param id ID des vorhandenen Supplements
+     * @param file Binärdatei als `File`-Objekt von _Multer_.
+     * @param req: Request-Objekt von Express für den Location-Header.
+     * @param res Leeres Response-Objekt von Express.
+     * @returns Leeres Promise-Objekt.
+     */
+    // eslint-disable-next-line max-params
+    @Post(':id')
+    @Public()
+    // @Roles({ roles: ['admin']})
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiOperation({ summary: 'Binärdatei mit einem Bild hochladen' })
+    @ApiParam({
+        name: 'id',
+        description: 'Z.B. 1',
+    })
+    @ApiCreatedResponse({ description: 'Erfolgreich hinzugefügt' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Datei' })
+    @ApiForbiddenResponse({ description: MSG_FORBIDDEN })
+    @UseInterceptors(FileInterceptor('file'))
+    async addFile(
+        @Param(
+            'id',
+            new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }),
+        )
+        id: number,
+        @UploadedFile() file: Express.Multer.File,
+        @Req() req: Request,
+        @Res() res: Response,
+    ): Promise<Response> {
+        this.#logger.debug(
+            'addFile: id: %d, originalname=%s, mimetype=%s',
+            id,
+            file.originalname,
+            file.mimetype,
+        );
+
+        // TODO Dateigroesse pruefen
+
+        await this.#service.addFile(
+            id,
+            file.buffer,
+            file.originalname,
+            file.mimetype,
+        );
+
+        const location = `${createBaseUri(req)}/file/${id}`;
+        this.#logger.debug('addFile: location=%s', location);
+        return res.location(location).send();
+    }
+
+    /**
+     * Ein vorhandenes Supplement wird asynchron aktualisiert.
      *
-     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Buches
+     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Supplements
      * als Pfad-Parameter enthalten sein. Außerdem muss im Rumpf das zu
-     * aktualisierende Buch als JSON-Datensatz enthalten sein. Damit die
+     * aktualisierende Supplement als JSON-Datensatz enthalten sein. Damit die
      * Aktualisierung überhaupt durchgeführt werden kann, muss im Header
      * `If-Match` auf die korrekte Version für optimistische Synchronisation
      * gesetzt sein.
@@ -210,6 +270,7 @@ export class SupplementWriteController {
             };
             return produktbild;
         });
+    
         const supplement = {
             id: undefined,
             version: undefined,
@@ -218,6 +279,7 @@ export class SupplementWriteController {
             supplementArt: supplementDTO.supplementArt,
             beschreibung,
             produktbilder,
+            file: undefined,
             erzeugt: new Date(),
             aktualisiert: new Date(),
         };
@@ -239,6 +301,7 @@ export class SupplementWriteController {
             supplementArt: supplementDTO.supplementArt,
             beschreibung: undefined,
             produktbilder: undefined,
+            file: undefined,
             erzeugt: new Date(),
             aktualisiert: new Date(),
         };

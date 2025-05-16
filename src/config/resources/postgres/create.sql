@@ -71,3 +71,20 @@ CREATE TABLE IF NOT EXISTS supplement.produktbild (
 
 CREATE INDEX IF NOT EXISTS produktbild_supplement_id_idx
     ON supplement.produktbild (supplement_id);
+
+/*---------------------------------------------------------------------------
+  5)  1 : 1 - Tabelle SUPPLEMENT_FILE
+---------------------------------------------------------------------------*/
+CREATE TABLE IF NOT EXISTS supplement.supplement_file (
+    id              integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    filename        varchar NOT NULL,
+    mimetype        varchar,
+    data            bytea   NOT NULL,              -- binaryType
+
+    supplement_id   integer NOT NULL UNIQUE        -- 1:1 → UNIQUE
+        REFERENCES supplement.supplement(id)
+);
+
+CREATE INDEX IF NOT EXISTS supplement_file_supplement_id_idx
+    ON supplement.supplement_file (supplement_id);

@@ -10,6 +10,7 @@ import {
     VersionInvalidException,
     VersionOutdatedException,
 } from './exceptions.js';
+import { SupplementFile } from '../entity/supplementFile.entity.js';
 
 /** Typdefinitionen zum Aktualisieren eines Supplements mit `update`. */
 export type UpdateParams = {
@@ -31,13 +32,16 @@ export class SupplementWriteService {
     readonly #logger= getLogger(SupplementWriteService.name);
     readonly #repo: Repository<Supplement>;
     readonly #readService: SupplementReadService;
+    readonly #fileRepo: Repository<SupplementFile>;
     
     constructor(
         @InjectRepository(Supplement) repo: Repository<Supplement>,
+        @InjectRepository(SupplementFile) fileRepo: Repository<SupplementFile>,
         readService: SupplementReadService,
     ) {
         this.#repo = repo;
         this.#readService = readService;
+        this.#fileRepo = fileRepo;
     };
 
     /**
@@ -53,12 +57,61 @@ export class SupplementWriteService {
         return supplementDB.id;
     }
 
+     /**
+     * Zu einem vorhandenen Supplement eine Binärdatei mit z.B. einem Bild abspeichern.
+     * @param supplementId ID des vorhandenen Supplements
+     * @param data Bytes der Datei
+     * @param filename Dateiname
+     * @param mimetype MIME-Type
+     * @returns Entity-Objekt für `SupplementFile`
+     */
+    // eslint-disable-next-line max-params
+    async addFile(
+        supplementId: number,
+        data: Buffer,
+        filename: string,
+        mimetype: string,
+    ): Promise<Readonly<SupplementFile>> {
+        this.#logger.debug(
+            'addFile: supplementId: %d, filename:%s, mimetype: %s',
+            supplementId,
+            filename,
+            mimetype,
+        );
+
+        // Supplement ermitteln, falls vorhanden
+        const supplement = await this.#readService.findById({ id: supplementId });
+
+        // evtl. vorhandene Datei loeschen
+        await this.#fileRepo
+            .createQueryBuilder('supplement_file')
+            .delete()
+            .where('supplement_id = :id', { id: supplementId })
+            .execute();
+
+        // Entity-Objekt aufbauen, um es spaeter in der DB zu speichern (s.u.)
+        const supplementFile = this.#fileRepo.create({
+            filename,
+            data,
+            mimetype,
+            supplement,
+        });
+
+        // Den Datensatz fuer Supplement mit der neuen Binaerdatei aktualisieren
+        await this.#repo.save({
+            id: supplement.id,
+            file: supplementFile,
+        });
+
+        return supplementFile;
+    }
+
     /**
      * Ein vorhandenes Supplement soll aktualisiert werden. "Destructured" Argument
      * mit id (ID des zu aktualisierenden Supplements), Supplement (zu aktualisierendes Supplement)
      * und version (Versionsnummer für optimistische Synchronisation).
      * @returns Die neue Versionsnummer gemäß optimistischer Synchronisation
-     * @throws NotFoundException falls kein Buch zur ID vorhanden ist
+     * @throws NotFoundException falls kein Supplement zur ID vorhanden ist
      * @throws VersionInvalidException falls die Versionsnummer ungültig ist
      * @throws VersionOutdatedException falls die Versionsnummer veraltet ist
      */
@@ -94,8 +147,8 @@ export class SupplementWriteService {
     /**
      * Ein Supplement wird asynchron anhand seiner ID gelöscht.
      *
-     * @param id ID des zu löschenden Buches
-     * @returns true, falls das Buch vorhanden war und gelöscht wurde. Sonst false.
+     * @param id ID des zu löschenden Supplements
+     * @returns true, falls das Supplements vorhanden war und gelöscht wurde. Sonst false.
      */
     async delete(id: number) {
         this.#logger.debug('delete: id=%d', id);

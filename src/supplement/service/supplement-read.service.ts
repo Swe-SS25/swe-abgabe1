@@ -5,6 +5,9 @@ import { QueryBuilder } from './query-builder.js';
 import { Suchkriterien } from "./suchkriterien";
 import { Pageable } from "./pageable";
 import { Slice } from "./slice";
+import { SupplementFile } from "../entity/supplementFile.entity.js";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
 export type FindByIDParams = {
     readonly id: number;
@@ -17,16 +20,20 @@ export class SupplementReadService {
 
     readonly #queryBuilder: QueryBuilder;
 
+    readonly #fileRepo: Repository<SupplementFile>;
+
     readonly #supplementProps: string[];
     
     readonly #logger = getLogger(SupplementReadService.name);
 
     constructor(
         queryBuilder: QueryBuilder,
+        @InjectRepository(SupplementFile) fileRepo: Repository<SupplementFile>,
     ){
-        this.#queryBuilder = queryBuilder;
         const supplementDummy = new Supplement();
         this.#supplementProps = Object.getOwnPropertyNames(supplementDummy);
+        this.#queryBuilder = queryBuilder;
+        this.#fileRepo = fileRepo;
     }
 
     /**
@@ -49,6 +56,28 @@ export class SupplementReadService {
             }
 
         return supplement;
+    }
+
+    /**
+     * Binärdatei zu einem Supplement suchen.
+     * @param supplementId ID des zugehörigen Supplements.
+     * @returns Binärdatei oder undefined als Promise.
+     */
+    async findFileBySupplementId(
+        supplementId: number,
+    ): Promise<Readonly<SupplementFile> | undefined> {
+        this.#logger.debug('findFileBySupplementId: supplementId=%s', supplementId);
+        const supplementFile = await this.#fileRepo
+            .createQueryBuilder('supplement_file')
+            .where('supplement_id = :id', { id: supplementId })
+            .getOne();
+        if (supplementFile === null) {
+            this.#logger.debug('findFileBySupplementId: Keine Datei gefunden');
+            return;
+        }
+
+        this.#logger.debug('findFileBySupplementId: filename=%s', supplementFile.filename);
+        return supplementFile;
     }
 
     /**
@@ -118,7 +147,7 @@ export class SupplementReadService {
 
     #checkKeys(keys: string[]) {
         this.#logger.debug('#checkKeys: keys=%s', keys);
-        // Ist jedes Suchkriterium auch eine Property von Buch oder "schlagwoerter"?
+        // Ist jedes Suchkriterium auch eine Property von Supplement?
         let validKeys = true;
         keys.forEach((key) => {
             if (

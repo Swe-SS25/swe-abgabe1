@@ -1,6 +1,6 @@
 import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { getLogger } from "../../logger/logger.js";
-import { Controller, Get, HttpStatus, Param, ParseIntPipe, Req, Res, UseInterceptors, Headers, Query } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Param, ParseIntPipe, Req, Res, UseInterceptors, Headers, Query, NotFoundException, StreamableFile } from "@nestjs/common";
 import { paths } from "../../config/paths.js";
 import { ResponseTimeInterceptor } from "../../logger/response-time.interceptor.js";
 import { SupplementReadService } from "../service/supplement-read.service.js";
@@ -11,6 +11,7 @@ import { Suchkriterien } from "../service/suchkriterien.js";
 import { SupplementArt } from '../entity/supplement.entity.js';
 import { createPage } from "./page.js";
 import { createPageable } from "../service/pageable.js";
+import { Readable } from "stream";
 
 /**
  * Klasse für `BuchGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
@@ -184,5 +185,39 @@ export class SupplementGetController {
         this.#logger.debug('get: supplementPage=%o', supplementPage);
 
         return res.json(supplementPage).send();
+    }
+
+    @Get('/file/:id')
+    @Public()
+    @ApiOperation({ description: 'Suche nach Datei mit der Supplement-ID' })
+    @ApiParam({
+        name: 'id',
+        description: 'Z.B. 1',
+    })
+    @ApiNotFoundResponse({ description: 'Keine Datei zur Supplement-ID gefunden' })
+    @ApiOkResponse({ description: 'Die Datei wurde gefunden' })
+    async getFileById(
+        @Param('id') idStr: number,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        this.#logger.debug('getFileById: supplementId:%s', idStr);
+
+        const id = Number(idStr);
+        if (!Number.isInteger(id)) {
+            this.#logger.debug('getById: not isInteger()');
+            throw new NotFoundException(`Die Supplement-ID ${idStr} ist ungueltig.`);
+        }
+
+        const supplementFile = await this.#service.findFileBySupplementId(id);
+        if (supplementFile?.data === undefined) {
+            throw new NotFoundException('Keine Datei gefunden.');
+        }
+
+        const stream = Readable.from(supplementFile.data);
+        res.contentType(supplementFile.mimetype ?? 'image/png').set({
+            'Content-Disposition': `inline; filename="${supplementFile.filename}"`, // eslint-disable-line @typescript-eslint/naming-convention
+        });
+
+        return new StreamableFile(stream);
     }
 }
