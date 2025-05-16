@@ -49,7 +49,7 @@ package supplement.entity {
     @PrimaryColumn() readonly id: number
     @Column() readonly info: string
     @Column() readonly vorteile: string
-    @Column() readonly dosieremphehlug: string
+    @Column() readonly dosierempfehlung: string
     @OneToOne(() => Supplement) @JoinColumn() supplment: Supplement
   }
 
