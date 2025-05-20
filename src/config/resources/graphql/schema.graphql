@@ -60,7 +60,7 @@ type Produktbild {
 """Darreichungsform des Supplements"""
 enum SupplementArt {
   pulver
-  kapseln
+  Tabletten
   kapseln
 }
 
