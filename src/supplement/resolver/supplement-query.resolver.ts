@@ -5,11 +5,16 @@ import { SupplementReadService } from "../service/supplement-read.service.js";
 import { getLogger } from "../../logger/logger.js";
 import { Public } from "nest-keycloak-connect";
 import { HttpExceptionFilter } from './http-exception.filter.js';
-import { Supplement } from "../entity/supplement.entity.js";
+import { Suchkriterien } from "../service/suchkriterien.js";
+import { createPageable } from "../service/pageable.js";
 
 
 export type IdInput = {
     readonly id: number;
+}
+
+export type SuchkriterienInput = {
+    readonly suchkriterien: Suchkriterien
 }
 
 @Resolver('Supplement')
@@ -24,10 +29,9 @@ export class SupplementQueryResolver {
         this.#service = service;
     }
 
-    @Query(() => Supplement, {name: 'supplement'})
+    @Query('supplement')
     @Public()
     async findById(@Args() { id }: IdInput) {
-        console.log('Typ von id:', typeof id);
 
         this.#logger.debug('findById: id=%d', id);    
         
@@ -41,5 +45,16 @@ export class SupplementQueryResolver {
             );
         }
         return supplement;
+    }
+    @Query('supplements')
+    @Public()
+    async find(@Args() input: SuchkriterienInput | undefined) {
+        this.#logger.debug('find: input=%o', input)
+        const pageable = createPageable({});
+        const supplementsSlice = await this.#service.find(
+            input?.suchkriterien,
+            pageable);
+        this.#logger.debug('find: supplementsSlice=%o', supplementsSlice);
+        return supplementsSlice.content;
     }
 }
