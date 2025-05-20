@@ -23,6 +23,7 @@ import { SupplementReadService } from './service/supplement-read.service.js';
 import { SupplementGetController } from './controller/supplement-get.controller.js';
 import { QueryBuilder } from './service/query-builder.js';
 import { SupplementQueryResolver } from './resolver/supplement-query.resolver.js';
+import { SupplementMutationResolver } from './resolver/supplement-mutation.resolver.js';
 
 /**
  * Das Modul besteht aus Controller- und Service-Klassen für die Verwaltung von
@@ -42,7 +43,8 @@ import { SupplementQueryResolver } from './resolver/supplement-query.resolver.js
         SupplementWriteService,
         SupplementReadService,
         SupplementQueryResolver,
-        QueryBuilder,
+        SupplementMutationResolver,
+        QueryBuilder
     ],
     // Export der Provider fuer DI in anderen Modulen
     exports: [SupplementWriteService, SupplementReadService],

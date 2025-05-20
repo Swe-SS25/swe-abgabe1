@@ -115,9 +115,10 @@ type UpdatePayload {
 
 """Zugriffs- und Erneuerungstoken für Authentifizierung"""
 type TokenResult {
-  accessToken: String!
-  refreshToken: String!
-  expiresIn: Int!
+  access_token: String!
+  expires_in: Int!
+  refresh_token: String!
+  refresh_expires_in: Int!
 }
 
 """Benutzerdefinierter Skalartyp für ISO-8601 Zeitstempel"""
