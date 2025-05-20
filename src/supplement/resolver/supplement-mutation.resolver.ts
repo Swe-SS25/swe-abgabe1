@@ -1,4 +1,4 @@
-/*import { Args, extend, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, extend, Mutation, Resolver } from "@nestjs/graphql";
 import { SupplementDTO } from "../controller/supplementDTO.entity";
 import { IsInt, IsNumberString } from "class-validator";
 import { UseFilters, UseGuards, UseInterceptors } from "@nestjs/common";
@@ -60,4 +60,4 @@ export class SupplementMutationResolver {
             
         }
     }
-}*/
+}

@@ -59,9 +59,9 @@ type Produktbild {
 
 """Darreichungsform des Supplements"""
 enum SupplementArt {
-  PULVER
-  TABLETTEN
-  KAPSELN
+  pulver
+  kapseln
+  kapseln
 }
 
 """Suchkriterien für Supplements"""

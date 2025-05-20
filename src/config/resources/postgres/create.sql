@@ -21,9 +21,9 @@ BEGIN
            AND t.typname  = 'supplement_art'        -- snake_case!
     ) THEN
         CREATE TYPE supplement.supplement_art AS ENUM (
-            'pulver',
-            'tabletten',
-            'kapseln'
+            'PULVER',
+            'TABLETTEN',
+            'KAPSELN'
         );
     END IF;
 END $$;
