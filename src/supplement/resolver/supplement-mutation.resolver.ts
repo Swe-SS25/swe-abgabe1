@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from "./http-exception.filter.js";
 import { ResponseTimeInterceptor } from "../../logger/response-time.interceptor.js";
 import { SupplementWriteService } from "../service/supplement-write.service.js";
 import { getLogger } from "../../logger/logger.js";
+import { IdInput } from "./supplement-query.resolver";
 
 export type CreatePayload = {
     readonly id: number;
@@ -55,6 +56,34 @@ export class SupplementMutationResolver {
         return payload    
     }
 
+    @Mutation()
+    @Roles({ roles: ['admin', 'user']})
+    async update(@Args('input') supplementUpdateDTO: SupplementUpdateDTO) {
+        this.#logger.debug('update: supplementUpdateDTO= %o', supplementUpdateDTO);
+
+        const supplement = this.#supplementUpdateDtoToSupplement(supplementUpdateDTO);
+        const versionStr = `"${supplementUpdateDTO.version.toString()}"`;
+        const versionResult = await this.#service.update({
+            id: Number.parseInt(supplementUpdateDTO.id, 10),
+            supplement,
+            version: versionStr
+        })
+        this.#logger.debug('update: versionResult= %o', versionResult);
+        const payload: UpdatePayload = { version: versionResult };
+        return payload;
+    }
+
+    @Mutation()
+    @Roles({ roles: ['admin', 'user']})
+    async delete(@Args() id: IdInput) {
+        const idStr = id.id;
+        this.#logger.debug('delete: id=%d', idStr);
+        const deleted = await this.#service.delete(idStr);
+        this.#logger.debug('delete: deleted=%s', deleted);
+        return deleted;
+    }
+
+
     #supplementDtoToSupplement(supplementDTO: SupplementDTO): Supplement{
         const beschreibungDTO = supplementDTO.beschreibung;
         const beschreibung: Beschreibung = {
@@ -90,5 +119,20 @@ export class SupplementMutationResolver {
 
         supplement.beschreibung!.supplement = supplement;
         return supplement;
+    }
+
+    #supplementUpdateDtoToSupplement(supplementDTO: SupplementUpdateDTO): Supplement {
+        return {
+            id: undefined,
+            version: undefined,
+            name: supplementDTO.name,
+            portionen: supplementDTO.portionen,
+            supplementArt: supplementDTO.supplementArt,
+            beschreibung: undefined,
+            produktbilder: undefined,
+            file: undefined,
+            erzeugt: undefined,
+            aktualisiert: new Date(),
+        }
     }
 }

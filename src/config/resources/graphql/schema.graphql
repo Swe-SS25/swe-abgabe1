@@ -82,6 +82,7 @@ input SupplementInput {
 """Eingabedaten zur Aktualisierung eines Supplements"""
 input SupplementUpdateInput {
   id: ID!
+  version: Int!
   name: String
   portionen: Int
   supplementArt: SupplementArt
@@ -109,8 +110,7 @@ type CreatePayload {
 
 """Rückgabe nach Aktualisieren eines Supplements"""
 type UpdatePayload {
-  success: Boolean!
-  updatedId: Int
+  version: Int
 }
 
 """Zugriffs- und Erneuerungstoken für Authentifizierung"""
