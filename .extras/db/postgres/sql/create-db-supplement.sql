@@ -13,7 +13,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
--- (1) in .extras\compose\backend\postgres\compose.yml
+-- (1) in extras\compose\compose.yml
 --        auskommentieren:
 --           Zeile mit "command:" und nachfolgende Listenelemente mit führendem "-"
 --              damit der PostgreSQL-Server ohne TLS gestartet wird
@@ -22,14 +22,12 @@
 --           Zeile mit "user:"
 --              damit der PostgreSQL-Server implizit mit dem Linux-User "root" gestartet wird
 --        Kommentar entfernen:
---           Zeile mit "#cap_add: [...]"
+--           Zeile mit "#: [...]"
 -- (2) PowerShell:
---     cd .extras\compose\backend\postgres
+--     cd .extras\compose\db\postgres
 --     docker compose up db
--- (3) In Windows das Verzeichnis "C:/Zimmermann/volumes/postgres/tablespace/buch" anlegen
---     Siehe .extras\compose\postgres\compose.yml
--- (4) 2. PowerShell:
---     cd .extras\compose\backend\postgres
+-- (3) 2. PowerShell:
+--     cd .extras\compose\db\postgres
 --     docker compose exec db bash
 --        chown postgres:postgres /var/lib/postgresql/tablespace
 --        chown postgres:postgres /var/lib/postgresql/tablespace/buch
@@ -39,40 +37,47 @@
 --        chmod 400 /var/lib/postgresql/certificate.crt
 --        exit
 --     docker compose down
--- (5) in compose.yml die obigen Kommentare wieder entfernen, d.h.
+-- (3) in compose.yml die obigen Kommentare wieder entfernen, d.h.
 --        PostgreSQL-Server mit TLS starten
 --        key.pem und certificate.crt als readonly
 --        den Linux-User "postgres" wieder aktivieren
 --     in compose.yml die Zeile "cap_add: [...]" wieder auskommentieren
--- (6) 1. PowerShell:
+-- (4) 1. PowerShell:
 --     docker compose up db
--- (7) 2. PowerShell:
+-- (5) 2. PowerShell:
 --     docker compose exec db bash
 --        psql --dbname=postgres --username=postgres --file=/sql/create-db-buch.sql
 --        psql --dbname=buch --username=buch --file=/sql/create-schema-buch.sql
 --        exit
---     ggf. docker compose down
+--      docker compose down
 
--- TLS fuer den PostgreSQL-Server mit OpenSSL ueberpruefen:
---     cd .extras\compose\debug
---     docker compose up
--- In einer weiteren Powershell
---     cd .extras\compose\debug
---     docker compose exec netshoot bash
---         openssl s_client -tls1_3 -trace postgres:5432
---            Ausgabe u.a.:
---            * selbst-signiertes Zertifikat
---            * Subject, CN (Common Name), OU (Organizationl Unit), O(rganization), L(ocation), ST(ate), C(ountry)
---         exit
---     docker compose down
+-- TLS fuer den PostgreSQL-Server mit OpenSSL in einer PowerShell ueberpruefen:
+-- openssl s_client -connect localhost:5432 -starttls postgres
+--
+--  Erlaeuterung:
+--      "openssl s_client": baut eine Verbindung ohne Verschlüsselung auf (hier: Rechner localhost mit Port 5432)
+--      "starttls postgres": Kommando STARTTLS wird zum Server gesendet für ein Upgrade
+--                           zu einer sicheren bzw. verschlüsselten Verbindung,
+--                           um danach ein "TLS Handshake" mit dem Protokoll "postgres" durchzuführen
+--
+-- Ausgabe:
+-- * "Can't use SSL_get_servername": Server gehört zu mehreren Domains bei derselben IP-Adresse
+-- * selbst-signiertes Zertifikat
+-- * "Certificate chain" mit Distinguished Name: S(ubject), CN (Common Name), OU (Organizationl Unit), O(rganization),
+--                                               L(ocation), ST(ate), C(ountry)
+-- * "No client certificate CA names sent": der OpenSSL-Client hat keine "Certificate Authority" (CA) Namen gesendet
+-- * Algorithmus (signing digest): SHA256
+-- * Signatur-Typ: RSA-PSS
+-- * "TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384"
+-- * Schluessellaenge 2048 Bit
 
 -- https://www.postgresql.org/docs/current/sql-createrole.html
-CREATE ROLE buch LOGIN PASSWORD 'p';
+CREATE ROLE supplement LOGIN PASSWORD 'p';
 
 -- https://www.postgresql.org/docs/current/sql-createdatabase.html
-CREATE DATABASE buch;
+CREATE DATABASE supplement;
 
-GRANT ALL ON DATABASE buch TO buch;
+GRANT ALL ON DATABASE supplement TO supplement;
 
 -- https://www.postgresql.org/docs/10/sql-createtablespace.html
-CREATE TABLESPACE buchspace OWNER buch LOCATION '/var/lib/postgresql/tablespace/buch';
+CREATE TABLESPACE supplementspace OWNER supplement LOCATION '/var/lib/postgresql/tablespace/supplement';
