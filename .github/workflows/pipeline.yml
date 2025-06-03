@@ -28,7 +28,7 @@ jobs:
         # (Assumes "prettier:check": "prettier --check \"src/**/*.js\"" in package.json)
 
       - name: Run ESLint
-        run: npm run lint
+        run: npm run eslint
         # (Assumes "lint": "eslint \"src/**/*.js\"" in package.json)
 
   build-test:
