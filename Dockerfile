@@ -44,25 +44,23 @@ FROM node:${NODE_VERSION}-bookworm-slim AS dist
 # "python3-dev" enthaelt "multiprocessing"
 # "build-essential" enthaelt "make"
 RUN <<EOF
-# https://explainshell.com/explain?cmd=set+-eux
-set -eux
-# https://manpages.debian.org/bookworm/apt/apt-get.8.en.html
-# Die "Package Index"-Dateien neu synchronisieren
-apt-get update --no-show-upgraded
-# Die neuesten Versionen der bereits installierten Packages installieren
-apt-get upgrade --yes --no-show-upgraded
+  set -eux
+  apt-get update --no-show-upgraded
+  apt-get upgrade --yes --no-show-upgraded
 
-# Debian Bookworm bietet nur Packages fuer Python 3.11; Ubuntu Jammy LTS nur fuer Python 3.10
-# https://packages.debian.org/bookworm/python3.11-minimal
-# https://packages.debian.org/bookworm/python3.11-dev
-# Python 3.12: Uebersetzung des Python-Quellcodes erforderlich
-# https://itnixpro.com/how-to-install-python-3-12-on-debian-12debian-11
-apt-get install --no-install-recommends --yes python3.11-minimal=3.11.2-6+deb12u5 python3.11-dev=3.11.2-6+deb12u5 build-essential=12.9
-ln -s /usr/bin/python3.11 /usr/bin/python3
-ln -s /usr/bin/python3.11 /usr/bin/python
+  # Remove “=3.11.2-6+deb12u5” and “=12.9” so apt grabs the current Bookworm versions:
+  apt-get install --no-install-recommends --yes \
+    python3.11-minimal \
+    python3.11-dev \
+    build-essential
 
-npm i -g --no-audit --no-fund npm
+  ln -s /usr/bin/python3.11 /usr/bin/python3
+  ln -s /usr/bin/python3.11 /usr/bin/python
+
+  npm i -g --no-audit --no-fund npm
 EOF
+
+
 
 USER node
 
@@ -96,7 +94,11 @@ apt-get update
 apt-get upgrade --yes
 # https://packages.debian.org/bookworm/python3.11-minimal
 # https://packages.debian.org/bookworm/python3.11-dev
-apt-get install --no-install-recommends --yes python3.11-minimal=3.11.2-6+deb12u5 python3.11-dev=3.11.2-6+deb12u5 build-essential=12.9
+apt-get install --no-install-recommends --yes \
+  python3.11-minimal \
+  python3.11-dev \
+  build-essential
+
 ln -s /usr/bin/python3.11 /usr/bin/python3
 ln -s /usr/bin/python3.11 /usr/bin/python
 npm i -g --no-audit --no-fund npm
@@ -125,11 +127,11 @@ FROM node:${NODE_VERSION}-bookworm-slim AS final
 # https://specs.opencontainers.org/image-spec/annotations
 # https://spdx.org/licenses
 # MAINTAINER ist deprecated https://docs.docker.com/engine/reference/builder/#maintainer-deprecated
-LABEL org.opencontainers.image.title="buch" \
-  org.opencontainers.image.description="Appserver buch mit Basis-Image Debian Bookworm" \
+LABEL org.opencontainers.image.title="supplement" \
+  org.opencontainers.image.description="Appserver supplement mit Basis-Image Debian Bookworm" \
   org.opencontainers.image.version="2025.4.1-bookworm" \
   org.opencontainers.image.licenses="GPL-3.0-or-later" \
-  org.opencontainers.image.authors="Juergen.Zimmermann@h-ka.de"
+  org.opencontainers.image.authors="brma1076@h-ka.de"
 
 RUN <<EOF
 set -eux

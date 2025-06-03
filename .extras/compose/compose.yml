@@ -39,9 +39,9 @@ include:
 
 # https://docs.docker.com/compose/compose-file/05-services
 services:
-  buch:
+  supplement:
   # ToDo: Name anpassen
-    image: juergenzimmermann/buch:2024.04.0-bookworm
+    image: brma1076/supplement:2025.4.1-bookworm
     depends_on:
       db:
         condition: service_healthy
@@ -65,9 +65,6 @@ services:
         source: ../../src/config/resources/jwt/private-key.pem
         target: /opt/app/dist/config/resources/jwt/private-key.pem
         read_only: true
-      - type: bind
-        source: ../../src/config/resources/db/sqlite/buch.sqlite
-        target: /opt/app/dist/config/resources/db/sqlite/buch.sqlite
     env_file: app.env
     environment:
       # https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution
