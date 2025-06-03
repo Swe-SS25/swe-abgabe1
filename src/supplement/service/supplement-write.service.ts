@@ -29,11 +29,11 @@ export type UpdateParams = {
 @Injectable()
 export class SupplementWriteService {
     private static readonly VERSION_PATTERN = /^"\d{1,3}"/u;
-    readonly #logger= getLogger(SupplementWriteService.name);
+    readonly #logger = getLogger(SupplementWriteService.name);
     readonly #repo: Repository<Supplement>;
     readonly #readService: SupplementReadService;
     readonly #fileRepo: Repository<SupplementFile>;
-    
+
     constructor(
         @InjectRepository(Supplement) repo: Repository<Supplement>,
         @InjectRepository(SupplementFile) fileRepo: Repository<SupplementFile>,
@@ -42,7 +42,7 @@ export class SupplementWriteService {
         this.#repo = repo;
         this.#readService = readService;
         this.#fileRepo = fileRepo;
-    };
+    }
 
     /**
      * Ein neues Supplement soll angelegt werden.
@@ -57,7 +57,7 @@ export class SupplementWriteService {
         return supplementDB.id;
     }
 
-     /**
+    /**
      * Zu einem vorhandenen Supplement eine Binärdatei mit z.B. einem Bild abspeichern.
      * @param supplementId ID des vorhandenen Supplements
      * @param data Bytes der Datei
@@ -80,7 +80,9 @@ export class SupplementWriteService {
         );
 
         // Supplement ermitteln, falls vorhanden
-        const supplement = await this.#readService.findById({ id: supplementId });
+        const supplement = await this.#readService.findById({
+            id: supplementId,
+        });
 
         // evtl. vorhandene Datei loeschen
         await this.#fileRepo
@@ -125,10 +127,16 @@ export class SupplementWriteService {
         );
         if (id === undefined) {
             this.#logger.debug('update: Keine gueltige ID');
-            throw new NotFoundException(`Es gibt kein Supplement mit der ID ${id}.`);
+            throw new NotFoundException(
+                `Es gibt kein Supplement mit der ID ${id}.`,
+            );
         }
 
-        const validateResult = await this.#validateUpdate(supplement, id, version);
+        const validateResult = await this.#validateUpdate(
+            supplement,
+            id,
+            version,
+        );
         this.#logger.debug('update: validateResult=%o', validateResult);
         if (!(validateResult instanceof Supplement)) {
             return validateResult;
@@ -142,7 +150,6 @@ export class SupplementWriteService {
 
         return updated.version!;
     }
-
 
     /**
      * Ein Supplement wird asynchron anhand seiner ID gelöscht.

@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Supplement } from '../entity/supplement.entity.js';
-import { getLogger } from "../../logger/logger.js";
+import { getLogger } from '../../logger/logger.js';
 import { QueryBuilder } from './query-builder.js';
-import { Suchkriterien } from "./suchkriterien";
-import { Pageable } from "./pageable";
-import { Slice } from "./slice";
-import { SupplementFile } from "../entity/supplementFile.entity.js";
-import { Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import { Suchkriterien } from './suchkriterien';
+import { Pageable } from './pageable';
+import { Slice } from './slice';
+import { SupplementFile } from '../entity/supplementFile.entity.js';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export type FindByIDParams = {
     readonly id: number;
@@ -23,13 +23,13 @@ export class SupplementReadService {
     readonly #fileRepo: Repository<SupplementFile>;
 
     readonly #supplementProps: string[];
-    
+
     readonly #logger = getLogger(SupplementReadService.name);
 
     constructor(
         queryBuilder: QueryBuilder,
         @InjectRepository(SupplementFile) fileRepo: Repository<SupplementFile>,
-    ){
+    ) {
         const supplementDummy = new Supplement();
         this.#supplementProps = Object.getOwnPropertyNames(supplementDummy);
         this.#queryBuilder = queryBuilder;
@@ -43,17 +43,20 @@ export class SupplementReadService {
      * @throws NotFoundException falls kein Supplement mit der ID existiert
      */
     async findById({
-        id, mitProduktbildern = false
-    }: FindByIDParams): Promise<Readonly<Supplement>>{
+        id,
+        mitProduktbildern = false,
+    }: FindByIDParams): Promise<Readonly<Supplement>> {
         this.#logger.debug('findById: id=%d', id);
 
         const supplement = await this.#queryBuilder
             .buildId({ id, mitProduktbildern })
             .getOne();
 
-            if (supplement === null) {
-                throw new NotFoundException(`Es gibt kein Supplement mit der ID ${id}.`);
-            }
+        if (supplement === null) {
+            throw new NotFoundException(
+                `Es gibt kein Supplement mit der ID ${id}.`,
+            );
+        }
 
         return supplement;
     }
@@ -66,7 +69,10 @@ export class SupplementReadService {
     async findFileBySupplementId(
         supplementId: number,
     ): Promise<Readonly<SupplementFile> | undefined> {
-        this.#logger.debug('findFileBySupplementId: supplementId=%s', supplementId);
+        this.#logger.debug(
+            'findFileBySupplementId: supplementId=%s',
+            supplementId,
+        );
         const supplementFile = await this.#fileRepo
             .createQueryBuilder('supplement_file')
             .where('supplement_id = :id', { id: supplementId })
@@ -76,7 +82,10 @@ export class SupplementReadService {
             return;
         }
 
-        this.#logger.debug('findFileBySupplementId: filename=%s', supplementFile.filename);
+        this.#logger.debug(
+            'findFileBySupplementId: filename=%s',
+            supplementFile.filename,
+        );
         return supplementFile;
     }
 
@@ -130,7 +139,9 @@ export class SupplementReadService {
         const queryBuilder = this.#queryBuilder.build({}, pageable);
         const supplements = await queryBuilder.getMany();
         if (supplements.length === 0) {
-            throw new NotFoundException(`Ungueltige Seite "${pageable.number}"`);
+            throw new NotFoundException(
+                `Ungueltige Seite "${pageable.number}"`,
+            );
         }
         const totalElements = await queryBuilder.getCount();
         return this.#createSlice(supplements, totalElements);
@@ -150,9 +161,7 @@ export class SupplementReadService {
         // Ist jedes Suchkriterium auch eine Property von Supplement?
         let validKeys = true;
         keys.forEach((key) => {
-            if (
-                !this.#supplementProps.includes(key)
-            ) {
+            if (!this.#supplementProps.includes(key)) {
                 this.#logger.debug(
                     '#checkKeys: ungueltiges Suchkriterium "%s"',
                     key,

@@ -24,7 +24,11 @@ import { Repository } from 'typeorm';
 import { Produktbild } from '../entity/produktbild.entity.js';
 import { Supplement } from '../entity/supplement.entity.js';
 import { Suchkriterien } from './suchkriterien.js';
-import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Pageable } from './pageable.js';
+import {
+    DEFAULT_PAGE_NUMBER,
+    DEFAULT_PAGE_SIZE,
+    Pageable,
+} from './pageable.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/typeormOptions.js';
 import { Beschreibung } from '../entity/beschreibung.entity.js';
@@ -54,10 +58,9 @@ export class QueryBuilder {
         .charAt(0)
         .toLowerCase()}${Beschreibung.name.slice(1)}`;
 
-
     readonly #repo: Repository<Supplement>;
 
-    readonly #logger = getLogger(QueryBuilder.name); 
+    readonly #logger = getLogger(QueryBuilder.name);
 
     constructor(@InjectRepository(Supplement) repo: Repository<Supplement>) {
         this.#repo = repo;
@@ -70,7 +73,9 @@ export class QueryBuilder {
      */
     buildId({ id, mitProduktbildern = false }: BuildIdParams) {
         // QueryBuilder "supplement" fuer Repository<Supplement>
-        const queryBuilder = this.#repo.createQueryBuilder(this.#supplementAlias);
+        const queryBuilder = this.#repo.createQueryBuilder(
+            this.#supplementAlias,
+        );
 
         // Fetch-Join: aus QueryBuilder "supplement" die Property "beschreibung" ->  Tabelle "beschreibung"
         queryBuilder.innerJoinAndSelect(
@@ -102,11 +107,7 @@ export class QueryBuilder {
     // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
     // eslint-disable-next-line max-lines-per-function, prettier/prettier, sonarjs/cognitive-complexity
     build(
-        {
-            name,
-            beschreibung,
-            ...restProps
-        }: Suchkriterien,
+        { name, beschreibung, ...restProps }: Suchkriterien,
         pageable: Pageable,
     ) {
         this.#logger.debug(
@@ -118,7 +119,10 @@ export class QueryBuilder {
         );
 
         let queryBuilder = this.#repo.createQueryBuilder(this.#supplementAlias);
-        queryBuilder.innerJoinAndSelect(`${this.#supplementAlias}.beschreibung`, 'beschreibung');
+        queryBuilder.innerJoinAndSelect(
+            `${this.#supplementAlias}.beschreibung`,
+            'beschreibung',
+        );
 
         let useWhere = true;
 

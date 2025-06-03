@@ -16,9 +16,9 @@
  */
 
 import {
-  DocumentBuilder,
-  type SwaggerCustomOptions,
-  SwaggerModule,
+    DocumentBuilder,
+    type SwaggerCustomOptions,
+    SwaggerModule,
 } from '@nestjs/swagger';
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module.js';
@@ -32,30 +32,30 @@ import { paths } from './config/paths.js';
 const { httpsOptions, port } = nodeConfig;
 
 const setupSwagger = (app: INestApplication) => {
-  const config = new DocumentBuilder()
-      .setTitle('Supplement')
-      .setDescription('Abgabe 1 für Software Engineering')
-      .setVersion('2025.04.0')
-      .addBearerAuth()
-      .build();
-  const document = SwaggerModule.createDocument(app, config);
-  const options: SwaggerCustomOptions = {
-      customSiteTitle: 'SWE 24/25',
-  };
-  SwaggerModule.setup(paths.swagger, app, document, options);
+    const config = new DocumentBuilder()
+        .setTitle('Supplement')
+        .setDescription('Abgabe 1 für Software Engineering')
+        .setVersion('2025.04.0')
+        .addBearerAuth()
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    const options: SwaggerCustomOptions = {
+        customSiteTitle: 'SWE 24/25',
+    };
+    SwaggerModule.setup(paths.swagger, app, document, options);
 };
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule, { httpsOptions });
-  app.use(helmetHandlers, compression());
+    const app = await NestFactory.create(AppModule, { httpsOptions });
+    app.use(helmetHandlers, compression());
 
-  app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe());
 
-  setupSwagger(app);
+    setupSwagger(app);
 
-  app.enableCors(corsOptions);
+    app.enableCors(corsOptions);
 
-  await app.listen(port);
+    await app.listen(port);
 };
 
 await bootstrap();

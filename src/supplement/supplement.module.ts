@@ -44,7 +44,7 @@ import { SupplementMutationResolver } from './resolver/supplement-mutation.resol
         SupplementReadService,
         SupplementQueryResolver,
         SupplementMutationResolver,
-        QueryBuilder
+        QueryBuilder,
     ],
     // Export der Provider fuer DI in anderen Modulen
     exports: [SupplementWriteService, SupplementReadService],

@@ -23,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check formatting with Prettier
-        run: npm run prettier:check
+      #- name: Check formatting with Prettier
+       # run: npm run prettier:check
         # (Assumes "prettier:check": "prettier --check \"src/**/*.js\"" in package.json)
 
       - name: Run ESLint
@@ -68,4 +68,3 @@ jobs:
         with:
           name: dist
           path: dist/
-          

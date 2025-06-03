@@ -10,13 +10,17 @@ export class BeschreibungDTO {
     @MaxLength(255)
     readonly info!: string;
 
-    @ApiProperty({ example: 'Fördert den Muskelaufbau und unterstützt die Regeneration.' })
+    @ApiProperty({
+        example: 'Fördert den Muskelaufbau und unterstützt die Regeneration.',
+    })
     @IsString()
     @MaxLength(255)
     @IsOptional()
     readonly vorteile?: string;
 
-    @ApiProperty({ example: '1–2 Messlöffel täglich in Wasser oder Milch einrühren.' })
+    @ApiProperty({
+        example: '1–2 Messlöffel täglich in Wasser oder Milch einrühren.',
+    })
     @IsString()
     @MaxLength(255)
     @IsOptional()
