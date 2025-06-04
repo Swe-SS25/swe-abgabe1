@@ -13,8 +13,7 @@ import { Beschreibung } from './beschreibung.entity.js';
 import { Produktbild } from './produktbild.entity.js';
 import { SupplementFile } from './supplementFile.entity.js';
 
-
-export type SupplementArt = 'pulver' | 'tabletten' | 'kapseln'
+export type SupplementArt = 'pulver' | 'tabletten' | 'kapseln';
 
 @Entity()
 export class Supplement {
@@ -46,9 +45,13 @@ export class Supplement {
     })
     readonly produktbilder: Produktbild[] | undefined;
 
-    @OneToOne(() => SupplementFile, (supplementFile) => supplementFile.supplement, {
-        cascade: ['insert', 'remove'],
-    })
+    @OneToOne(
+        () => SupplementFile,
+        (supplementFile) => supplementFile.supplement,
+        {
+            cascade: ['insert', 'remove'],
+        },
+    )
     readonly file: SupplementFile | undefined;
 
     @CreateDateColumn()
@@ -56,5 +59,4 @@ export class Supplement {
 
     @UpdateDateColumn()
     readonly aktualisiert: Date | undefined;
-
 }

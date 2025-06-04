@@ -1,17 +1,39 @@
-import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { getLogger } from "../../logger/logger.js";
-import { Controller, Get, HttpStatus, Param, ParseIntPipe, Req, Res, UseInterceptors, Headers, Query, NotFoundException, StreamableFile } from "@nestjs/common";
-import { paths } from "../../config/paths.js";
-import { ResponseTimeInterceptor } from "../../logger/response-time.interceptor.js";
-import { SupplementReadService } from "../service/supplement-read.service.js";
-import { Public } from "nest-keycloak-connect";
-import { Supplement } from "../entity/supplement.entity.js";
+import {
+    ApiHeader,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiProperty,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import { getLogger } from '../../logger/logger.js';
+import {
+    Controller,
+    Get,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
+    Req,
+    Res,
+    UseInterceptors,
+    Headers,
+    Query,
+    NotFoundException,
+    StreamableFile,
+} from '@nestjs/common';
+import { paths } from '../../config/paths.js';
+import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { SupplementReadService } from '../service/supplement-read.service.js';
+import { Public } from 'nest-keycloak-connect';
+import { Supplement } from '../entity/supplement.entity.js';
 import { Request, Response } from 'express';
-import { Suchkriterien } from "../service/suchkriterien.js";
+import { Suchkriterien } from '../service/suchkriterien.js';
 import { SupplementArt } from '../entity/supplement.entity.js';
-import { createPage } from "./page.js";
-import { createPageable } from "../service/pageable.js";
-import { Readable } from "stream";
+import { createPage } from './page.js';
+import { createPageable } from '../service/pageable.js';
+import { Readable } from 'stream';
 
 /**
  * Klasse für `BuchGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
@@ -26,23 +48,22 @@ import { Readable } from "stream";
 export class SupplementQuery implements Suchkriterien {
     @ApiProperty({ required: false })
     declare readonly name?: string;
-  
+
     /** Darreichungsform: pulver | tabletten | kapseln */
     @ApiProperty({ required: false, enum: ['pulver', 'tabletten', 'kapseln'] })
     declare readonly supplementArt?: SupplementArt;
-  
+
     @ApiProperty({ required: false, description: 'Anzahl der Portionen' })
     declare readonly portionen?: string;
-  
+
     @ApiProperty({ required: false })
     declare readonly beschreibung?: string;
-    
+
     @ApiProperty({ required: false })
     declare size?: string;
 
     @ApiProperty({ required: false })
     declare page?: string;
-
 }
 
 /**
@@ -56,11 +77,11 @@ export class SupplementGetController {
 
     readonly #logger = getLogger(SupplementGetController.name);
 
-    constructor(service: SupplementReadService){
+    constructor(service: SupplementReadService) {
         this.#service = service;
     }
 
-     /**
+    /**
      * Ein Supplement wird asynchron anhand seiner ID als Pfadparameter gesucht.
      *
      * Falls es ein solches Supplement gibt und `If-None-Match` im Request-Header
@@ -107,7 +128,7 @@ export class SupplementGetController {
         @Req() req: Request,
         @Headers('If-None-Match') version: string | undefined,
         @Res() res: Response,
-    ): Promise<Response<Supplement | undefined>>{
+    ): Promise<Response<Supplement | undefined>> {
         this.#logger.debug('getById: id=%s, version=%s', id, version);
 
         if (req.accepts(['json', 'html']) === false) {
@@ -117,8 +138,14 @@ export class SupplementGetController {
 
         const supplement = await this.#service.findById({ id });
         if (this.#logger.isLevelEnabled('debug')) {
-            this.#logger.debug('getById(): supplement=%s', supplement.toString());
-            this.#logger.debug('getById(): beschreibung=%o', supplement.beschreibung);
+            this.#logger.debug(
+                'getById(): supplement=%s',
+                supplement.toString(),
+            );
+            this.#logger.debug(
+                'getById(): beschreibung=%o',
+                supplement.beschreibung,
+            );
         }
 
         // ETags
@@ -178,7 +205,7 @@ export class SupplementGetController {
             }
         });
         this.#logger.debug('get: query=%o', query);
-        
+
         const pageable = createPageable({ number: page, size });
         const supplementSlice = await this.#service.find(query, pageable);
         const supplementPage = createPage(supplementSlice, pageable);
@@ -194,7 +221,9 @@ export class SupplementGetController {
         name: 'id',
         description: 'Z.B. 1',
     })
-    @ApiNotFoundResponse({ description: 'Keine Datei zur Supplement-ID gefunden' })
+    @ApiNotFoundResponse({
+        description: 'Keine Datei zur Supplement-ID gefunden',
+    })
     @ApiOkResponse({ description: 'Die Datei wurde gefunden' })
     async getFileById(
         @Param('id') idStr: number,
@@ -205,7 +234,9 @@ export class SupplementGetController {
         const id = Number(idStr);
         if (!Number.isInteger(id)) {
             this.#logger.debug('getById: not isInteger()');
-            throw new NotFoundException(`Die Supplement-ID ${idStr} ist ungueltig.`);
+            throw new NotFoundException(
+                `Die Supplement-ID ${idStr} ist ungueltig.`,
+            );
         }
 
         const supplementFile = await this.#service.findFileBySupplementId(id);

@@ -28,7 +28,7 @@
     "clean": "rimraf dist log/server.log",
     "copy-resources": "node scripts/copy-resources.mts",
     "depcheck": "depcheck",
-    "eslint": "eslint src __tests__",
+    "eslint": "eslint src",
     "eslint:inspect-config": "eslint --inspect-config",
     "eslint:debug": "npm run eslint -- --debug",
     "invoke-webrequest": "pwsh -Command Invoke-WebRequest https://localhost:3000/rest/1 -SslProtocol Tls13 -SkipCertificateCheck",

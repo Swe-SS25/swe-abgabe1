@@ -1,21 +1,20 @@
-import { UseFilters, UseInterceptors } from "@nestjs/common";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { ResponseTimeInterceptor } from "../../logger/response-time.interceptor.js";
-import { SupplementReadService } from "../service/supplement-read.service.js";
-import { getLogger } from "../../logger/logger.js";
-import { Public } from "nest-keycloak-connect";
+import { UseFilters, UseInterceptors } from '@nestjs/common';
+import { Args, Query, Resolver } from '@nestjs/graphql';
+import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { SupplementReadService } from '../service/supplement-read.service.js';
+import { getLogger } from '../../logger/logger.js';
+import { Public } from 'nest-keycloak-connect';
 import { HttpExceptionFilter } from './http-exception.filter.js';
-import { Suchkriterien } from "../service/suchkriterien.js";
-import { createPageable } from "../service/pageable.js";
-
+import { Suchkriterien } from '../service/suchkriterien.js';
+import { createPageable } from '../service/pageable.js';
 
 export type IdInput = {
     readonly id: number;
-}
+};
 
 export type SuchkriterienInput = {
-    readonly suchkriterien: Suchkriterien
-}
+    readonly suchkriterien: Suchkriterien;
+};
 
 @Resolver('Supplement')
 @UseFilters(HttpExceptionFilter)
@@ -32,12 +31,11 @@ export class SupplementQueryResolver {
     @Query('supplement')
     @Public()
     async findById(@Args() { id }: IdInput) {
+        this.#logger.debug('findById: id=%d', id);
 
-        this.#logger.debug('findById: id=%d', id);    
-        
-        const supplement = await this.#service.findById({ id })
+        const supplement = await this.#service.findById({ id });
 
-        if(this.#logger.isLevelEnabled('debug')){
+        if (this.#logger.isLevelEnabled('debug')) {
             this.#logger.debug(
                 'findById: supplement=%s, name=%o',
                 supplement.toString(),
@@ -49,11 +47,12 @@ export class SupplementQueryResolver {
     @Query('supplements')
     @Public()
     async find(@Args() input: SuchkriterienInput | undefined) {
-        this.#logger.debug('find: input=%o', input)
+        this.#logger.debug('find: input=%o', input);
         const pageable = createPageable({});
         const supplementsSlice = await this.#service.find(
             input?.suchkriterien,
-            pageable);
+            pageable,
+        );
         this.#logger.debug('find: supplementsSlice=%o', supplementsSlice);
         return supplementsSlice.content;
     }

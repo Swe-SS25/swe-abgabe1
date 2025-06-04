@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ValidateNested, IsArray, IsBoolean, IsDateString, IsOptional, MaxLength, IsIn, IsInt } from 'class-validator';
+import {
+    ValidateNested,
+    IsArray,
+    IsBoolean,
+    IsDateString,
+    IsOptional,
+    MaxLength,
+    IsIn,
+    IsInt,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { BeschreibungDTO } from './beschreibungDTO.entity.js';
 import { ProduktbildDTO } from './produktbildDTO.entity.js';
@@ -13,12 +22,19 @@ export class SupplementDtoOhneRef {
 
     @IsInt()
     @IsOptional()
-    @ApiProperty({ example: 60, description: 'Anzahl der Portionen', type: Number })
+    @ApiProperty({
+        example: 60,
+        description: 'Anzahl der Portionen',
+        type: Number,
+    })
     readonly portionen!: number;
 
     @IsIn(['pulver', 'tabletten', 'kapseln'])
     @IsOptional()
-    @ApiProperty({ example: 'pulver', enum: ['pulver', 'tabletten', 'kapseln'] })
+    @ApiProperty({
+        example: 'pulver',
+        enum: ['pulver', 'tabletten', 'kapseln'],
+    })
     readonly supplementArt!: SupplementArt;
 
     @IsBoolean()

@@ -28,7 +28,7 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-import {  Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard, Public, Roles } from 'nest-keycloak-connect';
 import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
@@ -76,7 +76,7 @@ export class SupplementWriteController {
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
-    
+
     @Post()
     @Roles({ roles: ['admin', 'user'] })
     @ApiOperation({ summary: 'Ein neues Supplement anlegen' })
@@ -225,12 +225,16 @@ export class SupplementWriteController {
                 .send(msg);
         }
 
-        const supplement = this.#supplementDtoOhneRefToSupplement(supplementDTO);
-        const neueVersion = await this.#service.update({ id, supplement, version });
+        const supplement =
+            this.#supplementDtoOhneRefToSupplement(supplementDTO);
+        const neueVersion = await this.#service.update({
+            id,
+            supplement,
+            version,
+        });
         this.#logger.debug('put: version=%d', neueVersion);
         return res.header('ETag', `"${neueVersion}"`).send();
     }
-
 
     /**
      * Ein Supplement wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
@@ -261,16 +265,18 @@ export class SupplementWriteController {
             dosierempfehlung: beschreibungDTO?.dosierempfehlung,
             supplement: undefined,
         };
-        const produktbilder = supplementDTO.produktbilder?.map((produktbildDTO) => {
-            const produktbild: Produktbild = {
-                id: undefined,
-                bezeichnung: produktbildDTO.bezeichnung,
-                path: produktbildDTO.path,
-                supplement: undefined,
-            };
-            return produktbild;
-        });
-    
+        const produktbilder = supplementDTO.produktbilder?.map(
+            (produktbildDTO) => {
+                const produktbild: Produktbild = {
+                    id: undefined,
+                    bezeichnung: produktbildDTO.bezeichnung,
+                    path: produktbildDTO.path,
+                    supplement: undefined,
+                };
+                return produktbild;
+            },
+        );
+
         const supplement = {
             id: undefined,
             version: undefined,
@@ -292,7 +298,9 @@ export class SupplementWriteController {
         return supplement;
     }
 
-    #supplementDtoOhneRefToSupplement(supplementDTO: SupplementDtoOhneRef): Supplement {
+    #supplementDtoOhneRefToSupplement(
+        supplementDTO: SupplementDtoOhneRef,
+    ): Supplement {
         return {
             id: undefined,
             version: undefined,
