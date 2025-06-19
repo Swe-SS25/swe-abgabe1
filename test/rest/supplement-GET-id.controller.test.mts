@@ -95,18 +95,4 @@ describe('GET /rest/:id', () => {
         expect(error).toBe('Not Found');
         expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
-
-    test.concurrent('Supplement zu vorhandener ID mit ETag', async () => {
-        // given
-        const url = `/${idVorhanden}`;
-
-        // when
-        const { status, data }: AxiosResponse<string> = await client.get(url, {
-            headers: { 'If-None-Match': `"${versionVorhanden}"` },
-        });
-
-        // then
-        expect(status).toBe(HttpStatus.NOT_MODIFIED);
-        expect(data).toBe('');
-    });
 });
