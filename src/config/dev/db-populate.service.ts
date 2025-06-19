@@ -100,11 +100,6 @@ export class DbPopulateService implements OnApplicationBootstrap {
         const createStatements = readFileSync(createScript, 'utf8'); // eslint-disable-line security/detect-non-literal-fs-filename,n/no-sync
         await this.#datasource.query(createStatements);
 
-        const insertScript = path.resolve(this.#dbDir, 'insert.sql');
-        this.#logger.debug('insertScript = %s', insertScript);
-        const insertStatements = readFileSync(insertScript, 'utf8');
-        await this.#datasource.query(insertStatements);
-
         // COPY zum Laden von CSV-Dateien erfordert Administrationsrechte
         // https://www.postgresql.org/docs/current/sql-copy.html
 
@@ -115,6 +110,12 @@ export class DbPopulateService implements OnApplicationBootstrap {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `SET search_path TO ${adminDataSourceOptions!.database};`,
         );
+        const copyStmt =
+            "COPY %TABELLE% FROM '/csv/%TABELLE%.csv' (FORMAT csv, DELIMITER ';', HEADER true);";
+        for (const tabelle of this.#tabellen) {
+            // eslint-disable-next-line unicorn/prefer-string-replace-all
+            await dataSource.query(copyStmt.replace(/%TABELLE%/gu, tabelle));
+        }
         await dataSource.destroy();
     }
 

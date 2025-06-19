@@ -13,7 +13,7 @@ import { Beschreibung } from './beschreibung.entity.js';
 import { Produktbild } from './produktbild.entity.js';
 import { SupplementFile } from './supplementFile.entity.js';
 
-export type SupplementArt = 'pulver' | 'tabletten' | 'kapseln';
+export type SupplementArt = 'PULVER' | 'TABLETTEN' | 'KAPSELN';
 
 @Entity()
 export class Supplement {

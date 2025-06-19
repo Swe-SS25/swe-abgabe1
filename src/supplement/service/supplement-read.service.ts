@@ -179,9 +179,9 @@ export class SupplementReadService {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return (
             art === undefined ||
-            art === 'pulver' ||
-            art === 'tabletten' ||
-            art === 'kapseln'
+            art === 'PULVER' ||
+            art === 'TABLETTEN' ||
+            art === 'KAPSELN'
         );
     }
 }
