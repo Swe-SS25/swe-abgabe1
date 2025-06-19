@@ -1,0 +1,2394 @@
+{
+	"info": {
+		"_postman_id": "7622778a-0f2b-4532-b66a-33cd82795b6f",
+		"name": "REST",
+		"description": "REST-Schnittstelle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44817356"
+	},
+	"item": [
+		{
+			"name": "Suche mit ID",
+			"item": [
+				{
+					"name": "Vorhandene ID 20",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body.id).to.be.eql(1);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "20",
+									"description": "Supplement ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vorhandene ID 20 mit If-None-Match",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 304', () => {\r",
+									"    pm.response.to.have.status(304);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "20",
+									"description": "Supplement ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vorhandene ID 1 mit falscher Versionsnummer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body.id).to.be.eql(1);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "20",
+									"description": "Buch ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nicht-vorhandene ID 999999",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('ProblemDetails im Response Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message, error, statusCode } = body;\r",
+									"    pm.expect(message).to.be.a('string').that.includes('999999');\r",
+									"    pm.expect(error).to.be.equal('Not Found');\r",
+									"    pm.expect(statusCode).to.be.equal(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "999999",
+									"description": "Buch ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Falsche ID xy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('statusCode im Response-Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body.statusCode).to.be.equal(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "xy",
+									"description": "Buch ID"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle nach Büchern anhand der ID suchen.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Suche mit Suchkriterien",
+			"item": [
+				{
+					"name": "Alle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body: mind. 1 Buch und ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { content, page } = body;\r",
+									"    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+									"    content.map(buch => buch.id)\r",
+									"        .forEach(id => pm.expect(id).to.be.above(0));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}",
+							"host": [
+								"{{rest_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alle Seite 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body: mind. 1 Buch und ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { content } = body;\r",
+									"    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+									"    content.map(buch => buch.id)\r",
+									"        .forEach(id => pm.expect(id).to.be.above(0));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?page=2",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Teilstring \"Hochdosiert\" der Beschreibung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body: Titel enthaelt \"ta\" und ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { content } = body;\r",
+									"    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+									"    content.forEach(buch => {\r",
+									"        const { titel, id } = buch;\r",
+									"        pm.expect(titel.titel).to.be.a('string').that.includes('ta');\r",
+									"        pm.expect(id).to.be.above(0);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?beschreibung=Hochdosiertes Vitamin C",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "beschreibung",
+									"value": "Hochdosiertes Vitamin C"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Teilstring \"Vita\" des Namens Seite 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?name=Vita&page=1",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Vita"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nicht-vorhandener Teilstring des Namens",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?name=xxx",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "xxx"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "name=Ultra Whey 9000",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body: ISBN und ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { content } = body;\r",
+									"    pm.expect(content).to.be.an('array').that.has.a.lengthOf(1);\r",
+									"    const { isbn, id } = content[0];\r",
+									"    pm.expect(isbn).to.be.a('string').that.includes('978-3-897-22583-1');\r",
+									"    pm.expect(id).to.be.above(0);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?name=Vitamin C",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Vitamin C"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement Art Pulver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body: Schlagwort TYPESCRIPT und ID', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { content } = body;\r",
+									"    pm.expect(content).to.be.an('array').that.is.not.empty;\r",
+									"    content.forEach(buch => {\r",
+									"        const { art, id } = buch;\r",
+									"        pm.expect(art).to.be.equal('EPUB');\r",
+									"        pm.expect(id).to.be.above(0);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache",
+								"type": "text"
+							},
+							{
+								"key": "Postman-Token",
+								"value": "<calculated when request is sent>",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "<calculated when request is sent>",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.31.1",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br",
+								"type": "text"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?supplementArt=PULVER",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "supplementArt",
+									"value": "PULVER"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplementart UNGUELTIG",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache",
+								"type": "text"
+							},
+							{
+								"key": "Postman-Token",
+								"value": "<calculated when request is sent>",
+								"type": "text"
+							},
+							{
+								"key": "Host",
+								"value": "<calculated when request is sent>",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "PostmanRuntime/7.31.1",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br",
+								"type": "text"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?supplementArt=UNGUELTIG",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "supplementArt",
+									"value": "UNGUELTIG"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nicht-vorhandene Property",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{rest_url}}?php=true",
+							"host": [
+								"{{rest_url}}"
+							],
+							"query": [
+								{
+									"key": "php",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle nach Bücher mit Suchkriterien suchen.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Token admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit token, expiresIn, roles', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    console.log(`${JSON.stringify(body)}`);\r",
+									"    const { access_token, expires_in, refresh_token, refresh_expires_in, roles } = body;\r",
+									"    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+									"    pm.expect(expires_in).to.be.equal(1800);\r",
+									"    pm.expect(refresh_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+									"    pm.expect(refresh_expires_in).to.be.equal(3600);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "p",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{token_url}}",
+							"host": [
+								"{{token_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token mit falschem Passwort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 401', () => {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "FALSCH",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{token_url}}",
+							"host": [
+								"{{token_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token ohne Benutzerkennung",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 401', () => {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{token_url}}",
+							"host": [
+								"{{token_url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle einen JWT erhalten",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Neuanlegen",
+			"item": [
+				{
+					"name": "Neues Supplement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"PULVER\",            // gültig: pulver | tabletten | kapseln\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    },\r\n    {\r\n      \"bezeichnung\": \"Rückseite\",\r\n      \"path\": \"https://cdn.example.com/img/whey-back.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}",
+							"host": [
+								"{{rest_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neues Supplement mit ungültigen Daten",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 400', () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldungen im Response Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message } = body;\r",
+									"    const props = ['titel.titel', 'isbn', 'rating', 'art', 'preis', 'rabatt', 'datum', 'homepage'];\r",
+									"    pm.expect(message).to.be.an('array').that.has.a.lengthOf(props.length);\r",
+									"    message.forEach(msg => pm.expect(msg).to.be.a('string').that.includes.oneOf(props));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => pm.collectionVariables.set('TOKEN', res.json().access_token));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": \"30\",\r\n  \"supplementArt\": \"ungueltig\",            // gültig: pulver | tabletten | kapseln\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosieremphehlug\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    },\r\n    {\r\n      \"bezeichnung\": \"Rückseite\",\r\n      \"path\": \"https://cdn.example.com/img/whey-back.jpg\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}",
+							"host": [
+								"{{rest_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neues Buch ohne Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 401', () => {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"isbn\": \"978-0-007-00644-1\",\r\n  \"rating\": 1,\r\n  \"art\": \"HARDCOVER\",\r\n  \"preis\": 99.99,\r\n  \"rabatt\": 0.123,\r\n  \"lieferbar\": true,\r\n  \"datum\": \"2022-01-31\",\r\n  \"homepage\": \"https://post.rest\",\r\n  \"schlagwoerter\": [\"JAVASCRIPT\", \"TYPESCRIPT\"],\r\n  \"titel\": {\r\n    \"titel\": \"Titelpost\",\r\n    \"untertitel\": \"untertitelpost\"\r\n  },\r\n  \"abbildungen\": [{\r\n    \"beschriftung\": \"Abb. 1\",\r\n    \"contentType\": \"img/png\"\r\n  }]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}",
+							"host": [
+								"{{rest_url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle neue Bücher anlegen",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Ändern",
+			"item": [
+				{
+					"name": "Supplement 1000 ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).not.to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    pm.expect(token).to.be.a('string');\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"1\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1000,\r\n    \"version\": 1,\r\n    \"name\": \"Ultra GIGA Whey 9000\",\r\n    \"portionen\": 30,\r\n    \"supplementArt\": \"pulver\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement 30 mit falscher Versionsnummer ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 412', () => {\r",
+									"    pm.response.to.have.status(412);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldung im Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message } = body;\r",
+									"    pm.expect(message).to.be.a('string').that.includes('Versionsnummer');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"VITAMIN D\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"PULVER\",\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement 30 ohne Versionsnummer ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 428', () => {\r",
+									"    pm.response.to.have.status(428);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldung im Body', () => {\r",
+									"    const msg = pm.response.text();\r",
+									"    pm.expect(msg).to.be.a('string').that.includes('If-Match');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"PULVER\",\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buch 30 mit alter Versionsnummer ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 412', () => {\r",
+									"    pm.response.to.have.status(412);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldung im Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message } = body;\r",
+									"    pm.expect(message).to.be.a('string').that.includes('Versionsnummer');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"-1\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"PULVER\",\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nicht-vorhandenes Buch 999999 ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 404', () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldung im Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message } = body;\r",
+									"    pm.expect(message).to.be.a('string').that.includes('999999');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"PULVER\",\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "999999"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buch 30 mit ungültigen Daten ändern",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 400', () => {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Fehlermeldungen im Response Body', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { message } = body;\r",
+									"    const props = ['isbn', 'rating', 'art', 'preis', 'rabatt', 'datum', 'homepage'];\r",
+									"    pm.expect(message).to.be.an('array').that.has.a.lengthOf(props.length);\r",
+									"    message.forEach(msg => pm.expect(msg).to.be.a('string').that.includes.oneOf(props));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Ultra Whey 9000\",\r\n  \"portionen\": 30,\r\n  \"supplementArt\": \"NICHTS\",\r\n\r\n  \"beschreibung\": {\r\n    \"info\": \"Schokoladengeschmack, 24 g Protein pro Portion\",\r\n    \"vorteile\": \"Muskelaufbau, schneller Regenerations-Support\",\r\n    \"dosierempfehlung\": \"1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training\"\r\n  },\r\n\r\n  \"produktbilder\": [\r\n    {\r\n      \"bezeichnung\": \"Frontansicht\",\r\n      \"path\": \"https://cdn.example.com/img/whey-front.jpg\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle vorhandene Bücher löschen",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Löschen",
+			"item": [
+				{
+					"name": "Supplement 1 löschen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement mit nicht vorhandener ID löschen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "999999"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Über die REST-Schnittstelle vorhandene Bücher löschen",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "File Upload/Download",
+			"item": [
+				{
+					"name": "Neues Bild",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Location', () => {\r",
+									"    const { response } = pm;\r",
+									"    const location = response.headers.get('Location');\r",
+									"    pm.expect(location).to.match(/\\/rest\\/file\\/[1-9]\\d*/u);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "image/png",
+									"type": "file",
+									"src": "/C:/Users/Malik/Pictures/Screenshots/Screenshot 2024-11-09 150413.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neues Video mp4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Location', () => {\r",
+									"    const { response } = pm;\r",
+									"    const location = response.headers.get('Location');\r",
+									"    pm.expect(location).to.match(/\\/rest\\/file\\/[1-9]\\d*/u);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "video/mp4",
+									"type": "file",
+									"src": "/C:/Users/Malik/Documents/GitHub/beispiel/.extras/video.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "40"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neues Video mpeg",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 204', () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test('Location', () => {\r",
+									"    const { response } = pm;\r",
+									"    const location = response.headers.get('Location');\r",
+									"    pm.expect(location).to.match(/\\/rest\\/file\\/[1-9]\\d*/u);\r",
+									"});\r",
+									"pm.test('Leerer Body', () => {\r",
+									"    const body = pm.response.text();\r",
+									"    pm.expect(body).to.be.a('string').that.is.empty;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({\r",
+									"    url: 'https://localhost:3000/auth/token',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/x-www-form-urlencoded',\r",
+									"    },\r",
+									"    body: 'username=admin&password=p',\r",
+									"}, (err, res) => {\r",
+									"    const token = res.json().access_token;\r",
+									"    console.log(`token=${token}`);\r",
+									"    pm.collectionVariables.set('TOKEN', token);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"contentType": "video/mpeg",
+									"type": "file",
+									"src": "/C:/Users/Malik/Documents/GitHub/beispiel/.extras/video2.mpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{rest_url}}/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Datei zu Buch mit ID 40",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rest_url}}/file/:id",
+							"host": [
+								"{{rest_url}}"
+							],
+							"path": [
+								"file",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "40"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "rest_url",
+			"value": "{{base_url}}/rest",
+			"type": "string"
+		},
+		{
+			"key": "token_url",
+			"value": "{{base_url}}/auth/token",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJwUzR5c09jY0tsYzJ6NldCOEVnV0dJQWNyNS16MnlQdkR5MTc2d200YW8wIn0.eyJleHAiOjE3NTAzNjA4MTEsImlhdCI6MTc1MDM1OTAxMSwianRpIjoiM2Q5OGM2YTgtOTZjOS00OTljLTg2NmYtZjJlZmYwYjJkNzY5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9uZXN0IiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjM0NzgxNDQ4LWFjN2QtNDU3ZC1iMTY3LTg0ZDlkMDM2NTU2MCIsInR5cCI6IkJlYXJlciIsImF6cCI6Im5lc3QtY2xpZW50Iiwic2lkIjoiZjg5YzQyNWQtNWVmMi00MjI4LWFjZmUtZWIwODE0ZDY5ZWQ5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL2xvY2FsaG9zdDozMDAwIiwiaHR0cHM6Ly9vYXV0aC5wc3Rtbi5pbyIsImh0dHBzOi8vYnVjaDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1uZXN0Il19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibmVzdC1jbGllbnQiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6Ik5lc3QgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJOZXN0IiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW5AYWNtZS5jb20ifQ.E0TEzIQwjaOBRgRPuo74M3Jg-iGEgA5LmoY4fvFE_do1UhdvVHjAtrTPEFjhc6Rx8lJ_lHNtlITfvI_oqoH-cSTLw2EZKbqwrc9pWNsI5tF3NT0IGcWyA6Hkb3AN-ywdqX9ulfsHbOd-5OAqQ7SpyOnLrzIvA5hBZJJsrit9FbNlLotXkSGBbDFrEXGHDXh-nS6g4rLysyd5Blp_Qoj3pzwu3uYxTWQmaIjtvPpriuO0-BO5ZMYjctSwOi2LNtbBh8kR1NntJk3FFJy5zGOr8E4L7PWd5g1ETOWjyNdWO2QtZjifITitxhHvml6uvN9ua1dKDRjJr2An4KQdFBWncQ"
+		},
+		{
+			"key": "REFRESH_TOKEN",
+			"value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkOWJhZTU5Yy1mZjNhLTRmNWEtYmYyNS1hMTY3MjlhMjg5MDkifQ.eyJleHAiOjE3NTAzNjIxOTgsImlhdCI6MTc1MDM1ODU5OCwianRpIjoiZGM1YjllZmYtZmYwNy00Nzg1LTk3ZGUtNDA0MzM3Yjc5YTYxIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9uZXN0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9uZXN0Iiwic3ViIjoiMzQ3ODE0NDgtYWM3ZC00NTdkLWIxNjctODRkOWQwMzY1NTYwIiwidHlwIjoiUmVmcmVzaCIsImF6cCI6Im5lc3QtY2xpZW50Iiwic2lkIjoiMDNhZTcyN2UtMmQ2Zi00NmJiLTk3OTYtNWM5ZmJmNmVhNjVjIiwic2NvcGUiOiJ3ZWItb3JpZ2lucyBiYXNpYyByb2xlcyBlbWFpbCBhY3IgcHJvZmlsZSJ9.STrgYJw5SakbeLXUO6rW5ENsQBDQrUZ9DEhE94XnFe3dNjvlSZTp6skOVMUPZShgH1p0XT4zQVQgD3vZuvRJOg"
+		}
+	]
+}

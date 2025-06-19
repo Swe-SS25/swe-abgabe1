@@ -23,7 +23,6 @@ dependencies.svg
 .extras/compose/db/postgres/db_password.txt
 .extras/lasttest-locust/__pycache__
 .extras/lasttest-locust/.venv
-.extras/postman
 .extras/*.png
 .extras/*.jpeg
 .extras/*.gif
