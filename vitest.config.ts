@@ -22,9 +22,7 @@ export default defineConfig({
         name: 'Beispiel',
         // default ist ['**\/*.{test,spec}.?(c|m)[jt]s?(x)']
         include: [
-            'test/**/*.test.mts',
-            'test/graphql/**/*.test.mts',
-            'test/rest/**/*.test.mts',
+            'test/**/*.test.mts'
         ],
         globals: true,
         environment: 'node',
