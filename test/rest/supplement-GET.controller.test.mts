@@ -9,7 +9,8 @@ import { type ErrorResponse } from './error-response.mjs';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const nameVorhanden = 'creatin';
+const nameVorhanden = 'Vitam C';
+const beschreibungVorhanden = 'Hochdosiertes Vitamin C aus Acerola'
 const nameNichtVorhanden = 'unbekanntes-supplement';
 const portionenMin = 20;
 const supplementArtVorhanden = 'pulver';
@@ -52,9 +53,9 @@ describe('GET /rest', () => {
             });
     });
 
-    test.concurrent('Supplements mit einem Teil-Namen suchen', async () => {
+    test.concurrent('Supplements mit einem Teil-Beschreibung suchen', async () => {
         // given
-        const params = { name: nameVorhanden };
+        const params = { name: beschreibungVorhanden };
 
         // when
         const { status, headers, data }: AxiosResponse<Page<Supplement>> =
@@ -68,8 +69,8 @@ describe('GET /rest', () => {
         data.content
             .map((supplement) => supplement.name)
             .forEach((name) =>
-                expect(name?.toLowerCase()).toStrictEqual(
-                    expect.stringContaining(nameVorhanden),
+                expect(name).toStrictEqual(
+                    expect.stringContaining(beschreibungVorhanden),
                 ),
             );
     });

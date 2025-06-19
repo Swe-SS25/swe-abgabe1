@@ -29,7 +29,7 @@ const token = inject('tokenRest');
 const neuesSupplement: SupplementDTO = {
     name: 'Creatin Monohydrat',
     portionen: 60,
-    supplementArt: 'pulver',
+    supplementArt: 'PULVER',
     beschreibung: {
         info: 'Zur Unterstützung des Muskelaufbaus',
         dosierempfehlung: '5g pro Tag',
