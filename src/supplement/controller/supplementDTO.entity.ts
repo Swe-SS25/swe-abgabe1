@@ -13,7 +13,7 @@ import { Type } from 'class-transformer';
 import { BeschreibungDTO } from './beschreibungDTO.entity.js';
 import { ProduktbildDTO } from './produktbildDTO.entity.js';
 
-export type SupplementArt = 'pulver' | 'tabletten' | 'kapseln';
+export type SupplementArt = 'PULVER' | 'TABLETTEN' | 'KAPSELN';
 
 export class SupplementDtoOhneRef {
     @MaxLength(100)
@@ -29,11 +29,11 @@ export class SupplementDtoOhneRef {
     })
     readonly portionen!: number;
 
-    @IsIn(['pulver', 'tabletten', 'kapseln'])
+    @IsIn(['PULVER', 'TABLETTEN', 'KAPSELN'])
     @IsOptional()
     @ApiProperty({
-        example: 'pulver',
-        enum: ['pulver', 'tabletten', 'kapseln'],
+        example: 'PULVER',
+        enum: ['PULVER', 'TABLETTEN', 'KAPSELN'],
     })
     readonly supplementArt!: SupplementArt;
 
