@@ -27,10 +27,13 @@ const token = inject('tokenRest');
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
+
+const supplementArten = ['PULVER', 'TABLETTEN', 'KAPSELN'] as const;
+
 const neuesSupplement: SupplementDTO = {
     name: 'Ultra Whey 8000',
     portionen: 30,
-    supplementArt: 'PULVER',
+    supplementArt: supplementArten[0], // PULVER
     beschreibung: {
         info: 'Schokoladengeschmack, 24 g Protein pro Portion',
         vorteile: 'Muskelaufbau, schneller Regenerations-Support',
