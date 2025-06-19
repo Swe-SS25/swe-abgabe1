@@ -20,8 +20,12 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     test: {
         name: 'Beispiel',
-         // default ist ['**\/*.{test,spec}.?(c|m)[jt]s?(x)']
-        include: ['test/**/*.test.mts'],
+        // default ist ['**\/*.{test,spec}.?(c|m)[jt]s?(x)']
+        include: [
+            'test/**/*.test.mts',
+            'test/graphql/**/*.test.mts',
+            'test/rest/**/*.test.mts',
+        ],
         globals: true,
         environment: 'node',
         // https://vitest.dev/config/#globalsetup
@@ -39,4 +43,4 @@ export default defineConfig({
             // provider: 'istanbul',
         },
     },
-})
+});
