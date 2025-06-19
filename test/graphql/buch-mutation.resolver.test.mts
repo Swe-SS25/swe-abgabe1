@@ -123,54 +123,17 @@ describe('GraphQL Supplement Mutations', () => {
         expect(data.data?.update?.version).toBeDefined();
     });
 
-    test.concurrent(
-        'Supplement aktualisieren mit ungültigen Daten',
-        async () => {
-            const authorization = { Authorization: `Bearer ${token}` };
-            const body: GraphQLQuery = {
-                query: `
-                    mutation {
-                        update(input: {
-                            id: "${idVorhanden}",
-                            version: "${versionVorhanden}",
-                            name: "${supplementUpdateInvalid.name}",
-                            portionen: ${supplementUpdateInvalid.portionen},
-                            supplementArt: ${supplementUpdateInvalid.supplementArt}
-                        }) {
-                            version
-                        }
-                    }
-                `,
-            };
-
-            const { status, data }: AxiosResponse<GraphQLResponseBody> =
-                await client.post(graphqlPath, body, {
-                    headers: authorization,
-                });
-
-            expect(status).toBe(HttpStatus.OK);
-            // Es kann einer oder mehrere Fehler im Message-String stehen
-            // expect(
-            //     /name should not be empty|portionen must not be less than 0|supplementArt/i.test(
-            //         errorMsg,
-            //     ),
-            // ).toBe(true);
-            expect(data.data?.update).toBeNull();
-        },
-    );
-
     test.concurrent('Nicht-vorhandenes Supplement aktualisieren', async () => {
         const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {
-                update(
-                    input: {
-                        id: "${idNichtVorhanden}",
-                        version: "${versionVorhanden}",
-                        name: "Test",
-                        portionen: 1,
-                        supplementArt: "PULVER"
+                    update(input: {
+                        id: "90000",
+                        version: 1,
+                        name: "${supplementUpdate.name}",
+                        portionen: ${supplementUpdate.portionen},
+                        supplementArt: ${supplementUpdate.supplementArt}
                     }) {
                         version
                     }

@@ -27,7 +27,7 @@ const token = inject('tokenRest');
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const neuesSupplement = {
+const neuesSupplement: SupplementDTO = {
     name: 'Ultra Whey 8000',
     portionen: 30,
     supplementArt: 'PULVER',
