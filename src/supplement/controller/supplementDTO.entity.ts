@@ -8,6 +8,9 @@ import {
     MaxLength,
     IsIn,
     IsInt,
+    IsNotEmpty,
+    IsString,
+    Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BeschreibungDTO } from './beschreibungDTO.entity.js';
@@ -17,11 +20,13 @@ export type SupplementArt = 'PULVER' | 'TABLETTEN' | 'KAPSELN';
 
 export class SupplementDtoOhneRef {
     @MaxLength(100)
+    @IsNotEmpty()
+    @IsString()
     @ApiProperty({ example: 'Creatin Monohydrat', type: String })
     readonly name!: string;
 
     @IsInt()
-    @IsOptional()
+    @Min(0)
     @ApiProperty({
         example: 60,
         description: 'Anzahl der Portionen',
@@ -30,7 +35,6 @@ export class SupplementDtoOhneRef {
     readonly portionen!: number;
 
     @IsIn(['PULVER', 'TABLETTEN', 'KAPSELN'])
-    @IsOptional()
     @ApiProperty({
         example: 'PULVER',
         enum: ['PULVER', 'TABLETTEN', 'KAPSELN'],

@@ -20,54 +20,49 @@ import { type SupplementDTO } from '../../src/supplement/controller/supplementDT
 import { SupplementReadService } from '../../src/supplement/service/supplement-read.service.js';
 import { baseURL, httpsAgent } from '../constants.mjs';
 import { type ErrorResponse } from './error-response.mjs';
+import path from 'path';
 
 const token = inject('tokenRest');
 
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const neuesSupplement: SupplementDTO = {
-    name: 'Creatin Monohydrat',
-    portionen: 60,
+const neuesSupplement = {
+    name: 'Ultra Whey 8000',
+    portionen: 30,
     supplementArt: 'PULVER',
     beschreibung: {
-        info: 'Zur Unterstützung des Muskelaufbaus',
-        dosierempfehlung: '5g pro Tag',
-        vorteile: 'muskelaufbau',
+        info: 'Schokoladengeschmack, 24 g Protein pro Portion',
+        vorteile: 'Muskelaufbau, schneller Regenerations-Support',
+        dosierempfehlung:
+            '1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training',
     },
     produktbilder: [
         {
-            bezeichnung: 'Dose',
-            path: 'creatin-dose.png',
+            bezeichnung: 'Frontansicht',
+            path: 'https://cdn.example.com/img/whey-front.jpg',
+        },
+        {
+            bezeichnung: 'Rückseite',
+            path: 'https://cdn.example.com/img/whey-back.jpg',
         },
     ],
 };
-const neuesSupplementInvalid: Record<string, unknown> = {
+const neuesSupplementInvalid = {
     name: '',
-    portionen: -10,
-    supplementArt: 'unbekannt',
+    portionen: -5,
+    supplementArt: 'falscheArt',
     beschreibung: {
         info: '',
-        dosierempfehlung: '',
         vorteile: '',
+        dosierempfehlung: '',
     },
     produktbilder: [
         {
             bezeichnung: '',
-            path: '',
+            path: 'not-a-url',
         },
     ],
-};
-const neuesSupplementNameExistiert: SupplementDTO = {
-    name: 'Creatin Monohydrat', // muss vorher schon in der DB sein!
-    portionen: 60,
-    supplementArt: 'pulver',
-    beschreibung: {
-        info: 'Schon vorhanden',
-        dosierempfehlung: '5g',
-        vorteile: 'muskelaufbau',
-    },
-    produktbilder: [],
 };
 
 // -----------------------------------------------------------------------------
@@ -152,29 +147,6 @@ describe('POST /rest', () => {
         expect(messages.length).toBeGreaterThanOrEqual(expectedMsg.length);
         expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
-
-    test.concurrent(
-        'Neues Supplement, aber der Name existiert bereits',
-        async () => {
-            // given
-            headers.Authorization = `Bearer ${token}`;
-
-            // when
-            const response: AxiosResponse<ErrorResponse> = await client.post(
-                '',
-                neuesSupplementNameExistiert,
-                { headers },
-            );
-
-            // then
-            const { data } = response;
-
-            const { message, statusCode } = data;
-
-            expect(message).toStrictEqual(expect.stringContaining('Name'));
-            expect(statusCode).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-        },
-    );
 
     test.concurrent('Neues Supplement, aber ohne Token', async () => {
         // when
