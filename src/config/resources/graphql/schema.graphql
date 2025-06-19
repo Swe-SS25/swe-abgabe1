@@ -3,34 +3,54 @@ schema {
   mutation: Mutation
 }
 
-"""Abfrageoperationen für Supplements"""
+"""
+Abfrageoperationen für Supplements
+"""
 type Query {
-  """Alle Supplements abrufen mit optionalen Suchkriterien"""
+  """
+  Alle Supplements abrufen mit optionalen Suchkriterien
+  """
   supplements(suchkriterien: SuchkriterienInput): [Supplement!]!
 
-  """Ein einzelnes Supplement nach ID"""
+  """
+  Ein einzelnes Supplement nach ID
+  """
   supplement(id: ID!): Supplement
 }
 
-"""Mutationen zum Erstellen, Aktualisieren und Löschen von Supplements sowie Auth"""
+"""
+Mutationen zum Erstellen, Aktualisieren und Löschen von Supplements sowie Auth
+"""
 type Mutation {
-  """Ein neues Supplement anlegen"""
+  """
+  Ein neues Supplement anlegen
+  """
   create(input: SupplementInput!): CreatePayload!
 
-  """Ein Supplement aktualisieren"""
+  """
+  Ein Supplement aktualisieren
+  """
   update(input: SupplementUpdateInput!): UpdatePayload!
 
-  """Ein Supplement löschen"""
+  """
+  Ein Supplement löschen
+  """
   delete(id: ID!): Boolean!
 
-  """Login-Token anfordern"""
+  """
+  Login-Token anfordern
+  """
   token(username: String!, password: String!): TokenResult!
 
-  """Access-Token mit Refresh-Token erneuern"""
+  """
+  Access-Token mit Refresh-Token erneuern
+  """
   refresh(refresh_token: String!): TokenResult!
 }
 
-"""Supplement mit Beschreibung und Bildern"""
+"""
+Supplement mit Beschreibung und Bildern
+"""
 type Supplement {
   id: Int!
   name: String!
@@ -42,7 +62,9 @@ type Supplement {
   aktualisiert: DateTime
 }
 
-"""Zusätzliche Information über ein Supplement"""
+"""
+Zusätzliche Information über ein Supplement
+"""
 type Beschreibung {
   id: Int!
   info: String
@@ -50,27 +72,35 @@ type Beschreibung {
   dosierempfehlung: String
 }
 
-"""Produktbild eines Supplements"""
+"""
+Produktbild eines Supplements
+"""
 type Produktbild {
   id: Int!
   bezeichnung: String!
   path: String
 }
 
-"""Darreichungsform des Supplements"""
+"""
+Darreichungsform des Supplements
+"""
 enum SupplementArt {
-  pulver
-  tabletten
-  kapseln
+  PULVER
+  TABLETTEN
+  KAPSELN
 }
 
-"""Suchkriterien für Supplements"""
+"""
+Suchkriterien für Supplements
+"""
 input SuchkriterienInput {
   name: String
   supplementArt: SupplementArt
 }
 
-"""Eingabedaten zur Erstellung eines Supplements"""
+"""
+Eingabedaten zur Erstellung eines Supplements
+"""
 input SupplementInput {
   name: String!
   portionen: Int
@@ -79,7 +109,9 @@ input SupplementInput {
   produktbilder: [ProduktbildInput!]
 }
 
-"""Eingabedaten zur Aktualisierung eines Supplements"""
+"""
+Eingabedaten zur Aktualisierung eines Supplements
+"""
 input SupplementUpdateInput {
   id: ID!
   version: Int!
@@ -90,30 +122,40 @@ input SupplementUpdateInput {
   produktbilder: [ProduktbildInput!]
 }
 
-"""Eingabedaten für eine Beschreibung"""
+"""
+Eingabedaten für eine Beschreibung
+"""
 input BeschreibungInput {
   info: String
   vorteile: String
   dosierempfehlung: String
 }
 
-"""Eingabedaten für ein Produktbild"""
+"""
+Eingabedaten für ein Produktbild
+"""
 input ProduktbildInput {
   bezeichnung: String!
   path: String
 }
 
-"""Rückgabe nach Erstellen eines Supplements"""
+"""
+Rückgabe nach Erstellen eines Supplements
+"""
 type CreatePayload {
   id: Int!
 }
 
-"""Rückgabe nach Aktualisieren eines Supplements"""
+"""
+Rückgabe nach Aktualisieren eines Supplements
+"""
 type UpdatePayload {
   version: Int
 }
 
-"""Zugriffs- und Erneuerungstoken für Authentifizierung"""
+"""
+Zugriffs- und Erneuerungstoken für Authentifizierung
+"""
 type TokenResult {
   access_token: String!
   expires_in: Int!
@@ -121,5 +163,7 @@ type TokenResult {
   refresh_expires_in: Int!
 }
 
-"""Benutzerdefinierter Skalartyp für ISO-8601 Zeitstempel"""
+"""
+Benutzerdefinierter Skalartyp für ISO-8601 Zeitstempel
+"""
 scalar DateTime
