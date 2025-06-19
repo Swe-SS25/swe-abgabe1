@@ -26,12 +26,13 @@ jobs:
       - name: Run ESLint
         run: npm run eslint
 
-    build-test:
-    name: Build, Serve & Test
+  build-test:
+    name: Build & Test
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Cache npm modules
         uses: actions/cache@v4
@@ -41,31 +42,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npm run build
+      - name: Build project
+        run: npm run build
 
-      # ──────────────────────────────────────────────────
-      # START THE SERVER IN THE BACKGROUND
-      - name: Start API server
-        run: |
-          # serve the built NestJS app
-          npm run start:prod &
+      - name: Run project
+        run: npm run dev
 
-          # wait for port 3000 to accept connections
-          npx wait-on http://localhost:3000
-
-      # ──────────────────────────────────────────────────
       - name: Run tests
         run: npm test
-
       - name: Upload build artifact
+
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
-
