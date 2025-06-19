@@ -1,0 +1,866 @@
+{
+	"info": {
+		"_postman_id": "e21b1acf-4aa1-4c34-8909-ea62c00b2bfb",
+		"name": "GraphQL Copy",
+		"description": "GraphQL-Schnittstelle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28674400"
+	},
+	"item": [
+		{
+			"name": "Query",
+			"item": [
+				{
+					"name": "Supplement mit ID 1 abrufen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query ($id: ID! = \"1\") {\n  supplement(id: $id) {\n    id\n    name\n    portionen\n    supplementArt\n    beschreibung {\n      info\n      dosierempfehlung\n      vorteile\n    }\n    produktbilder {\n      bezeichnung\n      path\n    }\n  }\n}",
+								"variables": "{\n  \"id\": \"1\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alle Supplements abrufen (ohne Filter)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n  supplements {\n    id\n    name\n    portionen\n    supplementArt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplemente nach Name-Filter suchen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n  supplements(suchkriterien: {name: \"Vitamin\"}) {\n    id\n    name\n    supplementArt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Queries mit der GraphQL-Schnittstelle"
+		},
+		{
+			"name": "Mutation",
+			"item": [
+				{
+					"name": "Neues Supplement anlegen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  create(input: {\n    name: \"Vitamin C5\",\n    portionen: 30,\n    supplementArt: PULVER,\n    \n  }) {\n    id\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ohen Token Neues Supplement anlegen Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  create(input: {\n    name: \"Vitamin C5\",\n    portionen: 30,\n    supplementArt: PULVER,\n    \n  }) {\n    id\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement mit ID 1 aktualisieren",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  update(input: {\n    id: \"20\",\n    version: 1,\n    name: \"Vitamin C - aktualisiert\",\n    portionen: 60,\n    supplementArt: KAPSELN\n  }) {\n    version\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Supplement mit ID 1 löschen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  delete(id: \"1000\")\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ungültiges Supplement anlegen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  create(input: {\n    name: \"\",\n    portionen: -5,\n    supplementArt: UNGUELTIG,\n    beschreibung: {\n      info: \"\",\n      dosierempfehlung: \"\",\n      vorteile: \"\"\n    },\n    produktbilder: []\n  }) {\n    id\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ungültiges Supplement aktualisieren",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  update(input: {\n    id: \"abc\",\n    version: -1,\n    name: \"\",\n    portionen: -100,\n    supplementArt: KAPSELN\n  }) {\n    version\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nicht-existierendes Supplement löschen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  delete(id: \"1\")\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "nicht vorhandene Supplement aktualisieren",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit den Properties', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { buch } = body.data;\r",
+									"    const { isbn, version, rating, art, preis, lieferbar, datum, homepage, schlagwoerter, titel, rabatt } = buch;\r",
+									"    pm.expect(isbn).to.be.a('string');\r",
+									"    pm.expect(version).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(rating).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(art).to.be.a('string');\r",
+									"    pm.expect(preis).to.be.a('number').that.is.gte(0);\r",
+									"    pm.expect(lieferbar).to.be.a('boolean');\r",
+									"    pm.expect(datum).to.be.a('string');\r",
+									"    pm.expect(homepage).to.be.a('string');\r",
+									"    pm.expect(schlagwoerter).to.be.an('array');\r",
+									"    pm.expect(titel.titel).to.be.a('string');\r",
+									"    pm.expect(rabatt).to.match(/ %$/u);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  update(input: {\n    id: \"9000\",\n    version: 1,\n    name: \"Vitamin C - aktualisiert\",\n    portionen: 60,\n    supplementArt: KAPSELN\n  }) {\n    version\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Neuanlegen, Ändern und Löschen mit der GraphQL-Schnittstelle",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest({",
+							"    url: 'https://localhost:3000/graphql',",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"    },",
+							"    body: JSON.stringify({",
+							"        query: `",
+							"            mutation {",
+							"                token(username: \"admin\", password: \"p\") {",
+							"                    access_token",
+							"                }",
+							"            }",
+							"        `",
+							"    })",
+							"}, (err, res) => {",
+							"    pm.collectionVariables.set('TOKEN', res.json().data.token.access_token);",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Token als admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit Token und Rollen', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { access_token, expires_in } = body.data.token;\r",
+									"    pm.expect(access_token).to.be.a('string').that.matches(/.+\\..+\\..+/u);\r",
+									"    pm.expect(expires_in).to.be.a('number');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\r\n    token(username: \"admin\", password: \"p\") {\r\n        access_token\r\n        expires_in\r\n        refresh_token\r\n        refresh_expires_in\r\n    }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\r\n    refresh(refresh_token: \"eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI3NDg1ODZmNi1iYjg5LTQ0MGEtYmFiNi01NGFlYWZmOGQ1ZjgifQ.eyJleHAiOjE3MDYzNzQ5OTMsImlhdCI6MTcwNjM3MTM5MywianRpIjoiN2IyMGRlOWItNTI0Ny00NDczLThlNjAtYzIwNjk5NjZhOWE5IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9hY21lIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9hY21lIiwic3ViIjoiZjkxNTZhYmYtNmRhNS00OGJmLWJjMWMtODEzM2FhZTI3NDE0IiwidHlwIjoiUmVmcmVzaCIsImF6cCI6ImJ1Y2gtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6Ijc0OWE5ZGI3LWFhMjgtNDA1YS1hYzU5LWI1ZGE3OGM5MDFiNCIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI3NDlhOWRiNy1hYTI4LTQwNWEtYWM1OS1iNWRhNzhjOTAxYjQifQ.X9FiLztLxqy9u4bEt6OAdUT8TsmEiWqs9oeQskT2ONo\") {\r\n        access_token\r\n        expires_in\r\n        refresh_token\r\n        refresh_expires_in\r\n        roles\r\n    }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token mit falschem Passwort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Statuscode 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test('Content-Type application/json', () => {\r",
+									"    const { response } = pm;\r",
+									"    const contentType = response.headers.get('Content-Type');\r",
+									"    pm.expect(contentType).to.match(/^application\\/json(; charset=utf-8)?/u);\r",
+									"});\r",
+									"pm.test('Body mit Fehlermeldung', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    const { errors } = body;\r",
+									"    pm.expect(errors).to.be.an('array').that.has.a.lengthOf(1);\r",
+									"    const error = errors[0];\r",
+									"    const { message, path, extensions } = error;\r",
+									"    pm.expect(message).to.be.a('string').that.includes('Passwort');\r",
+									"    pm.expect(path).to.be.an('array').that.has.a.lengthOf(1);\r",
+									"    pm.expect(path[0]).to.be.equal('token');\r",
+									"    pm.expect(extensions.code).to.be.equal('BAD_USER_INPUT');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\r\n    token(username: \"admin\", password: \"FALSCH\") {\r\n        access_token\r\n    }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql_url}}",
+							"host": [
+								"{{graphql_url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Token mit der GraphQL-Schnittstelle"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "graphql_url",
+			"value": "{{base_url}}/graphql",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJIYUJXdXZOeVp0M2dHWFhhMzJ4THNoNnZGLVpxX0xNT1pNYmJFelV5RUo4In0.eyJleHAiOjE3NDczODc3OTYsImlhdCI6MTc0NzM4NTk5NiwianRpIjoiMWZlMzYwZDQtYjhhMy00MWZmLWJlZmQtNmFiNzVmODY0NjdiIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4ODgwL3JlYWxtcy9uZXN0IiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjRkNGI4YzFmLWM2NzAtNDgyMi1iM2Q5LWMxYjk3MWUzZjU1ZiIsInR5cCI6IkJlYXJlciIsImF6cCI6Im5lc3QtY2xpZW50Iiwic2lkIjoiM2FmNmY3MTktMGRlOC00NTYzLWI3OTQtMTFkNzhkOThjYThlIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL3N1cHBsZW1lbnQ6MzAwMCIsImh0dHBzOi8vbG9jYWxob3N0OjMwMDAiLCJodHRwczovL29hdXRoLnBzdG1uLmlvIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1uZXN0Il19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibmVzdC1jbGllbnQiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6Ik5lc3QgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiIsImdpdmVuX25hbWUiOiJOZXN0IiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW5AYWNtZS5jb20ifQ.o1S_14M5iTqDIOZA3X2vl58yc_BvWj-w-sx6acgSRZJxaO2zytiC6is8UIp0ls1U9VfDS-_LMBkrX9i4BXAHqRPakM5BR8A01hdJzWiZGHJKwQf9ZhEsbBn_wUXmU8QwE-bviVDB1EqET5uj-Z-BLEbs7WXUt5wMeKDVSNJSMwdvauI2AUDsvdy98nggrIPwCGzwPAUIDQ1zPBlWCl8ULrmsSXntGWZqrlZ0DpuGEn38sGu0kx-FvnGu26HFJgYyPwSTlZIDzhieN6v7w2de_8zbk4IT65c8vHkO7PZId5-toIiGr0Eq3QeSw_bU6dmF7jZNKhMq1kx6PNq9Vjb8Pg",
+			"type": "string"
+		}
+	]
+}
