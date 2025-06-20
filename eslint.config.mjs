@@ -20,7 +20,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
     // https://github.com/prettier/eslint-plugin-prettier?tab=readme-ov-file#configuration-new-eslintconfigjs
     {
-        files: ['src/*.ts', '__tests__/**/*.ts'],
+        files: ['src/*.ts', 'test/**/*.ts'],
 
         extends: [
             // https://eslint.org/docs/latest/rules
@@ -477,7 +477,7 @@ export default tseslint.config(
         },
     },
     {
-        files: ['__tests__/**/*.ts'],
+        files: ['test/**/*.ts'],
 
         extends: [jest.configs['flat/recommended'], jest.configs['flat/style']],
 

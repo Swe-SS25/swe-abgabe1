@@ -54,27 +54,30 @@ describe('GET /rest', () => {
             });
     });
 
-    test.concurrent('Supplements mit einem Teil-Beschreibung suchen', async () => {
-        // given
-        const params = { beschreibung: beschreibungVorhanden };
+    test.concurrent(
+        'Supplements mit einem Teil-Beschreibung suchen',
+        async () => {
+            // given
+            const params = { beschreibung: beschreibungVorhanden };
 
-        // when
-        const { status, headers, data }: AxiosResponse<Page<Supplement>> =
-            await client.get('/', { params });
+            // when
+            const { status, headers, data }: AxiosResponse<Page<Supplement>> =
+                await client.get('/', { params });
 
-        // then
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-        expect(data).toBeDefined();
+            // then
+            expect(status).toBe(HttpStatus.OK);
+            expect(headers['content-type']).toMatch(/json/iu);
+            expect(data).toBeDefined();
 
-        data.content
-            .map((supplement) => supplement.beschreibung)
-            .forEach((beschreibung) =>
-                expect(beschreibung?.info?.toLowerCase()).toStrictEqual(
-                    expect.stringContaining(beschreibungVorhanden),
-                ),
-            );
-    });
+            data.content
+                .map((supplement) => supplement.beschreibung)
+                .forEach((beschreibung) =>
+                    expect(beschreibung?.info?.toLowerCase()).toStrictEqual(
+                        expect.stringContaining(beschreibungVorhanden),
+                    ),
+                );
+        },
+    );
 
     test.concurrent(
         'Keine Supplements zu nicht-vorhandenem Namen',
@@ -111,9 +114,7 @@ describe('GET /rest', () => {
 
         data.content
             .map((supplement) => supplement.supplementArt)
-            .forEach((art) =>
-                expect(art).toBe(supplementArtVorhanden),
-            );
+            .forEach((art) => expect(art).toBe(supplementArtVorhanden));
     });
 
     test.concurrent(
@@ -130,7 +131,6 @@ describe('GET /rest', () => {
             expect(status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
         },
     );
-
 
     test.concurrent(
         'Keine Supplements zu nicht-vorhandenem Vorteil',
