@@ -1,89 +1,61 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: ["main", "release/*"]
   pull_request:
-    branches: [main]
+    branches: ["main"]
+  workflow_dispatch:
 
 jobs:
-  build:
+  lint:
+    name: Lint (Prettier & ESLint)
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    strategy:
-      matrix:
-        node-version: [23.9.0]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Clean workspace
-        run: |
-          rm -rf src __tests__ node_modules dist \
-            .extras/doc/api \
-            .extras/doc/folien/folien.html \
-            .extras/doc/projekthandbuch/html
+          node-version: 20
 
       - name: Install dependencies
-        run: npm ci --no-fund --no-audit
+        run: npm ci
 
-      - name: Compile TypeScript
-        run: npx tsc
-
-      - name: Run Tests
-        run: npm run test:coverage
-        # remove 'continue-on-error' if you want failures to fail the job
-        continue-on-error: true
-
-      - name: ESLint
+      - name: Run ESLint
         run: npm run eslint
 
-      - name: Security Audit
-        run: npm audit --omit=dev
+  build-test:
+    name: Build & Test
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Generate AsciiDoctor docs
-        run: npm run asciidoctor
-
-      - name: Generate reveal.js slides
-        run: npm run revealjs
-
-      - name: Generate TypeDoc API
-        run: npm run typedoc
-
-      - name: Upload Projekthandbuch
-        uses: actions/upload-artifact@v3
+      - name: Cache npm modules
+        uses: actions/cache@v4
         with:
-          name: projekthandbuch
-          path: .extras/doc/projekthandbuch/html/projekthandbuch.html
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      - name: Upload TypeDoc API
-        uses: actions/upload-artifact@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: typedoc
-          path: .extras/doc/api/index.html
+          node-version: 20
 
-      - name: Zip distribution
-        run: zip -r buch.zip dist
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Upload distribution artifact
-        uses: actions/upload-artifact@v3
+      - name: Build project
+        run: npm run build
+
+      - name: Upload build artifact
+
+        uses: actions/upload-artifact@v4
         with:
-          name: buch
-          path: buch.zip
-
-      - name: Build and push Docker image
-        if: github.event_name == 'push'
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: |
-            supplement:${{ github.sha }}
-            supplement:latest
+          name: dist
+          path: dist/
