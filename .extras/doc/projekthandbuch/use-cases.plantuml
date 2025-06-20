@@ -1,0 +1,20 @@
+@startuml Use Cases
+
+actor Gast
+actor Admin
+actor Kunde
+
+rectangle supplement {
+    Gast --> (Supplement suchen)
+    Admin --> (Supplement suchen)
+    Admin --> (Supplement anlegen)
+    Admin --> (Supplement ändern)
+    Admin --> (Supplement löschen)
+    Kunde --> (Supplement suchen)
+    Kunde --> (Supplement anlegen)
+    Kunde --> (Supplement ändern)
+}
+
+footer (c) SWE Supplement
+
+@enduml

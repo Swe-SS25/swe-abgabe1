@@ -1,0 +1,94 @@
+@startuml SupplementWriteController
+
+interface Promise<T>
+
+package @nestjs/common {
+  class "@Controller" as Controller
+  hide Controller circle
+
+  class "@UseGuards" as UseGuards
+  hide UseGuards circle
+
+  class "@UseInterceptors" as UseInterceptors
+  hide UseInterceptors circle
+
+  class "@Post" as Post
+  hide Post circle
+
+  class "@Put" as Put
+  hide Put circle
+
+  class "@Delete" as Delete
+  hide Delete circle
+
+  class "@Req" as Req
+  hide Req circle
+
+  class "@Res" as Res
+  hide Res circle
+
+  class "@Param" as Param
+  hide Param circle
+
+  class "@Body" as Body
+  hide Body circle
+
+  class "@Headers" as Headers
+  hide Headers circle
+
+  class "@UploadedFile" as UploadedFile
+  hide UploadedFile circle
+}
+
+package nest-keycloak-connect {
+  class AuthGuard
+  class "@Roles" as Roles
+  hide Roles circle
+}
+
+package express {
+  class Request
+  class Response
+}
+
+package supplement {
+  package entity #FFFFFF {
+    class Supplement <<entity>>
+    class SupplementDTO
+    class SupplementDtoOhneRef
+    class Beschreibung
+    class Produktbild
+  }
+
+  package service {
+    class SupplementWriteService << control >>
+  }
+
+  package rest #DDDDDD {
+    class SupplementWriteController << control >> << @Controller() >> << @UseGuards() >> << @UseInterceptors() >> {
+      + @Post() @Roles() async post(@Body() supplementDTO: SupplementDTO, @Req() req: Request, @Res() res: Response): Promise<Response>
+      + @Post(':id') @Public() async addFile(@Param() id: number, @UploadedFile() file, @Req() req: Request, @Res() res: Response): Promise<Response>
+      + @Put(':id') @Roles() async put(@Body() supplementDTO: SupplementDtoOhneRef, @Param() id: number, @Headers() version: string, @Res() res: Response): Promise<Response>
+      + @Delete(':id') @Roles() async delete(@Param() id: number): Promise<void>
+    }
+
+    SupplementWriteController o--> "1" SupplementWriteService : #service
+    SupplementWriteController ..> Controller
+    SupplementWriteController .up.> AuthGuard
+    SupplementWriteController .up.> Roles
+    SupplementWriteController ..> Request
+    SupplementWriteController ..> Response
+    SupplementWriteController ..> Promise
+    SupplementWriteController ..> SupplementDTO
+    SupplementWriteController ..> SupplementDtoOhneRef
+    SupplementWriteController ..> Beschreibung
+    SupplementWriteController ..> Produktbild
+    SupplementWriteController ..> Supplement
+  }
+}
+
+hide empty members
+
+footer (c) SWE Supplement
+
+@enduml

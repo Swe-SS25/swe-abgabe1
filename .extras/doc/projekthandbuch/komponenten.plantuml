@@ -1,0 +1,75 @@
+@startuml Komponenten
+
+left to right direction
+
+actor RESTClient
+actor GraphQLClient
+
+node "Nest" {
+  [RequestLoggerMiddleware]
+
+  [SupplementGetController]
+  [SupplementWriteController]
+  [SupplementQueryResolver]
+  [SupplementMutationResolver]
+
+  [SupplementReadService]
+  [SupplementWriteService]
+
+  [Repository<Supplement>]
+  [Repository<SupplementFile>]
+}
+
+cloud {
+    [TypeORM]
+}
+
+cloud {
+    [nest-keycloak-connect]
+}
+
+database "DB supplement" {
+    [Tabelle supplement]
+    [Tabelle beschreibung]
+    [Tabelle produktbild]
+    [Tabelle supplement_file]
+}
+
+node {
+    [Keycloak]
+}
+
+RESTClient ~~> [RequestLoggerMiddleware]
+GraphQLClient ~~> [RequestLoggerMiddleware]
+
+[RequestLoggerMiddleware] ~~> [SupplementGetController]
+[RequestLoggerMiddleware] ~~> [SupplementWriteController]
+[RequestLoggerMiddleware] ~~> [SupplementQueryResolver]
+[RequestLoggerMiddleware] ~~> [SupplementMutationResolver]
+
+[SupplementGetController] ..> [SupplementReadService]
+[SupplementWriteController] ..> [SupplementWriteService]
+[SupplementQueryResolver] ..> [SupplementReadService]
+[SupplementMutationResolver] ..> [SupplementWriteService]
+
+[SupplementReadService] ..> [Repository<Supplement>]
+[SupplementReadService] ..> [Repository<SupplementFile>]
+[SupplementWriteService] ..> [Repository<Supplement>]
+[SupplementWriteService] ..> [Repository<SupplementFile>]
+
+[Repository<Supplement>] ~~> [TypeORM]
+[Repository<SupplementFile>] ~~> [TypeORM]
+[TypeORM] ~~> [Tabelle supplement]
+[TypeORM] ~~> [Tabelle beschreibung]
+[TypeORM] ~~> [Tabelle produktbild]
+[TypeORM] ~~> [Tabelle supplement_file]
+
+[SupplementGetController] ..> [nest-keycloak-connect]
+[SupplementWriteController] ..> [nest-keycloak-connect]
+[SupplementQueryResolver] ..> [nest-keycloak-connect]
+[SupplementMutationResolver] ..> [nest-keycloak-connect]
+[nest-keycloak-connect] ~~> [Keycloak]
+
+footer (c) SWE Supplement
+
+@enduml

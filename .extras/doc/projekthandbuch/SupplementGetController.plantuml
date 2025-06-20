@@ -1,0 +1,77 @@
+@startuml SupplementGetController
+
+interface Promise<T>
+
+package @nestjs/common {
+  class "@Controller" as Controller
+  hide Controller circle
+
+  class "@Get" as Get
+  hide Get circle
+
+  class "@Req" as Req
+  hide Req circle
+
+  class "@Res" as Res
+  hide Res circle
+
+  class "@Param" as Param
+  hide Param circle
+
+  class "@Query" as Query
+  hide Query circle
+
+  class "@UseInterceptors" as UseInterceptors
+  hide UseInterceptors circle
+
+  class "@Headers" as Headers
+  hide Headers circle
+}
+
+package express {
+  class Request
+  class Response
+
+  Response .[hidden].> Controller
+}
+
+package supplement {
+  package entity #FFFFFF {
+    class Supplement <<entity>>
+    Supplement .[hidden].> Promise
+    Supplement .[hidden].> Request
+  }
+
+  package service {
+    class SupplementReadService << control >>
+  }
+
+  package rest #DDDDDD {
+    SupplementQuery -up-|> Supplement
+
+    class SupplementGetController << control >> << @Controller() >> << @UseInterceptors() >> {
+      + @Get(':id') async getById(@Param() id: number, @Req() req: Request, @Headers() version: string, @Res() res: Response): Promise<Response<Supplement | undefined>>
+      + @Get() async get(@Query() query: SupplementQuery, @Req() req: Request, @Res() res: Response): Promise<Response<Supplement[] | undefined>>
+      + @Get('/file/:id') async getFileById(@Param() id: number, @Res() res: Response): Promise<StreamableFile>
+    }
+
+    SupplementGetController o--> "1" SupplementReadService : #service
+
+    SupplementGetController ..> Controller
+    SupplementGetController ..> Request
+    SupplementGetController ..> Response
+    SupplementGetController ..> Promise
+    SupplementGetController .up.> Supplement
+    SupplementGetController .up.> SupplementQuery
+
+    SupplementReadService .[hidden].> Request
+    SupplementReadService .[hidden].> Promise
+    Response .right[hidden].> Controller
+  }
+}
+
+hide empty members
+
+footer (c) SWE Supplement
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml Controller-Klasse
+
+interface Promise<T>
+
+package @nestjs/graphql {
+  class "@Resolver" as Resolver
+  hide Resolver circle
+
+  class "@UseInterceptors" as UseInterceptors
+  hide UseInterceptors circle
+
+  class "@UseFilters" as UseFilters
+  hide UseFilters circle
+
+  class "@Query" as Query
+  hide Query circle
+
+  class "@Args" as Args
+  hide Args circle
+
+  Resolver .left[hidden].> Promise
+}
+
+package supplement {
+  package entity {
+    class Supplement <<entity>>
+  }
+
+  package service {
+    class SupplementReadService << control >>
+  }
+
+  package graphql #DDDDDD {
+    class Suchkriterien
+    class "type IdInput = { id: number }" as IdInput
+    class "type SuchkriterienInput = { suchkriterien: Suchkriterien }" as SuchkriterienInput
+
+    class SupplementQueryResolver << control >> << @Resolver() >> << @UseInterceptors() >> << @UseFilters() >> {
+      + @Query() async supplement(@Args() id: IdInput): Promise<Supplement>
+      + @Query() async supplements(@Args() input: SuchkriterienInput | undefined): Promise<Supplement[]>
+    }
+
+    SupplementQueryResolver o-up-> "1" SupplementReadService : #service
+    SupplementQueryResolver ..> Supplement
+    SupplementQueryResolver ..> IdInput
+    SupplementQueryResolver ..> SuchkriterienInput
+    SupplementQueryResolver ..> Suchkriterien
+    SupplementQueryResolver ..> Resolver
+    SupplementQueryResolver ..> Promise
+
+    Supplement .[hidden].> Promise
+    SupplementReadService .[hidden].> Promise
+    Supplement .[hidden].> Resolver
+    SupplementReadService .[hidden].> Resolver
+  }
+}
+
+hide empty members
+
+footer (c) SWE Supplement
+
+@enduml

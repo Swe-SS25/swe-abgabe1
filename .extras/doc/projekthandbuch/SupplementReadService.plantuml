@@ -1,0 +1,61 @@
+@startuml Anwendungskern
+
+interface Promise<T>
+
+package @nestjs/common {
+  class "@Injectable" as Injectable
+  hide Injectable circle
+  class NotFoundException
+}
+
+package typeorm {
+  class Repository<T>
+}
+
+package @nestjs/typeorm {
+  class "@InjectRepository" as InjectRepository
+  hide InjectRepository circle
+}
+
+package supplement {
+  package entity {
+    class Supplement
+    class SupplementFile
+  }
+
+  package service #DDDDDD {
+    class QueryBuilder
+    class Pageable
+    class Slice
+    class Suchkriterien
+
+    class SupplementReadService << control >> <<@Injectable()>> {
+      + async findById(params: FindByIDParams): Promise<Supplement>
+      + async findFileBySupplementId(supplementId: number): Promise<SupplementFile | undefined>
+      + async find(suchkriterien: Suchkriterien | undefined, pageable: Pageable): Promise<Slice<Supplement>>
+    }
+
+    SupplementReadService o--> "1" QueryBuilder: queryBuilder
+    SupplementReadService o--> "1" Repository: @InjectRepository fileRepo
+
+    SupplementReadService .up.> Injectable
+    SupplementReadService .up.> InjectRepository
+
+    SupplementReadService .up.> Promise
+    SupplementReadService ..> Supplement
+    SupplementReadService ..> SupplementFile
+    SupplementReadService ..> Pageable
+    SupplementReadService ..> Slice
+    SupplementReadService ..> Suchkriterien
+    SupplementReadService ..> NotFoundException
+
+    QueryBuilder .[hidden].> Repository
+    QueryBuilder .[hidden].> Supplement
+  }
+}
+
+hide empty members
+
+footer (c) SWE Supplement
+
+@enduml

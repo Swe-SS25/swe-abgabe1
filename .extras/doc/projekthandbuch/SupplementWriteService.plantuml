@@ -1,0 +1,74 @@
+@startuml Anwendungskern
+
+interface Promise<T>
+
+package @nestjs/common {
+  class "@Injectable" as Injectable
+  hide Injectable circle
+  class NotFoundException
+}
+
+package typeorm {
+  class Repository<T>
+  class DeleteResult
+}
+
+package @nestjs/typeorm {
+  class "@InjectRepository" as InjectRepository
+  hide InjectRepository circle
+}
+
+package supplement {
+  package entity {
+    class Supplement
+    class Produktbild
+    class Beschreibung
+    class SupplementFile
+  }
+
+  package service #DDDDDD {
+    class VersionInvalidException
+    class VersionOutdatedException
+
+    class SupplementReadService
+
+    class SupplementWriteService << control >> <<@Injectable()>> {
+      + async create(supplement: Supplement): Promise<any>
+      + async addFile(supplementId: number, data: Buffer, filename: string, mimetype: string): Promise<SupplementFile>
+      + async update(params: UpdateParams): Promise<number|VersionInvalidException|VersionOutdatedException|NotFoundException>
+      + async delete(id: number): Promise<boolean>
+    }
+
+    SupplementWriteService o--> "1" SupplementReadService: readService
+    SupplementWriteService o--> "1" Repository: @InjectRepository repo
+    SupplementWriteService o--> "1" Repository: @InjectRepository fileRepo
+
+    SupplementWriteService .up.> Injectable
+    SupplementWriteService .up.> InjectRepository
+
+    SupplementWriteService .up.> Promise
+    SupplementWriteService ..> Supplement
+    SupplementWriteService ..> SupplementFile
+    SupplementWriteService ..> Produktbild
+    SupplementWriteService ..> Beschreibung
+    SupplementWriteService .up.> VersionInvalidException
+    SupplementWriteService .up.> VersionOutdatedException
+    SupplementWriteService .up.> NotFoundException
+
+    Supplement .up[hidden].> Promise
+    Supplement .up[hidden].> Injectable
+    Supplement .up[hidden].> InjectRepository
+    SupplementFile .up[hidden].> Supplement
+    Produktbild .up[hidden].> Supplement
+    Beschreibung .up[hidden].> Supplement
+    VersionInvalidException .up[hidden].> Supplement
+    VersionOutdatedException .up[hidden].> Supplement
+    SupplementReadService .[hidden].> Repository
+  }
+}
+
+hide empty members
+
+footer (c) SWE Supplement
+
+@enduml

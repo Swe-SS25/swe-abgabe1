@@ -1,0 +1,144 @@
+// Copyright (C) 2024 Ahmad, Joschua, Malik und Lukas, Hochschule Karlsruhe
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// Preview durch <Strg><Shift>v
+
+= Projekthandbuch Supplement
+Ahmad, Joschua, Malik und Lukas
+:doctype: book
+:toc: left
+:sectanchors:
+:sectlinks:
+:sectnums:
+:source-highlighter: highlight.js
+:icons: font
+
+IMPORTANT: Copyright (C) 2024 Ahmad, Joschua, Malik und Lukas, Hochschule Karlsruhe. +
+           Free use of this software is granted under the terms of the
+           GNU General Public License (GPL) v3. +
+           For the full text of the license, see the http://www.gnu.org/licenses/gpl-3.0.html[license] file.
+
+== Der Applikationsserver
+
+=== Der Applikationsserver im Überblick
+
+Das Supplement-Projekt ist eine moderne Webanwendung auf Basis von Node.js, NestJS und TypeORM. Es bietet eine REST- und GraphQL-Schnittstelle zur Verwaltung von Supplements, inklusive Authentifizierung über Keycloak.
+
+.Use Cases
+[plantuml,use-cases,svg]
+----
+include::use-cases.plantuml[]
+----
+
+.Komponentendiagramm
+[plantuml,komponenten,svg]
+----
+include::komponenten.plantuml[]
+----
+
+=== Die REST-Schnittstelle
+
+Die REST-Schnittstelle ermöglicht das Anlegen, Suchen, Ändern und Löschen von Supplements. Sie ist mit OpenAPI (Swagger) dokumentiert und nutzt Keycloak für die Authentifizierung.
+
+."SupplementGetController" für Lesezugriffe an der REST-Schnittstelle
+[plantuml,SupplementGetController,svg]
+----
+include::SupplementGetController.plantuml[]
+----
+
+."Sequenzdiagramm" mit den Methodenaufrufen
+[plantuml,sequenzdiagramm,svg]
+----
+include::sequenzdiagramm.plantuml[]
+----
+
+."SupplementWriteController" für Schreibzugriffe an der REST-Schnittstelle
+[plantuml,SupplementWriteController,svg]
+----
+include::SupplementWriteController.plantuml[]
+----
+
+=== Die GraphQL-Schnittstelle
+
+Die GraphQL-Schnittstelle bietet flexible Abfragen und Mutationen für Supplements. Sie unterstützt Authentifizierung und Fehlerbehandlung analog zur REST-API.
+
+.SupplementQueryResolver für Lesezugriffe an der GraphQL-Schnittstelle
+[plantuml,SupplementQueryResolver,svg]
+----
+include::SupplementQueryResolver.plantuml[]
+----
+
+.SupplementMutationResolver für Schreibzugriffe an der GraphQL-Schnittstelle
+[plantuml,SupplementMutationResolver,svg]
+----
+include::SupplementMutationResolver.plantuml[]
+----
+
+=== Die Geschäftslogik
+
+Die Geschäftslogik ist in Services gekapselt, die mit TypeORM auf die Datenbank zugreifen und Validierungen sowie Fehlerbehandlung übernehmen.
+
+."SupplementReadService" von der Geschäftslogik
+[plantuml,SupplementReadService,svg]
+----
+include::SupplementReadService.plantuml[]
+----
+
+."SupplementWriteService" von der Geschäftslogik
+[plantuml,SupplementWriteService,svg]
+----
+include::SupplementWriteService.plantuml[]
+----
+
+=== Klasse für Entities
+
+Die wichtigsten Entitäten sind Supplement, Beschreibung, Produktbild und SupplementFile. Sie sind mit TypeORM modelliert.
+
+.Entity
+[plantuml,supplement,svg]
+----
+include::supplement.plantuml[]
+----
+
+=== ER-Diagramm
+
+Das ER-Diagramm zeigt die Beziehungen zwischen den Entitäten in der Datenbank.
+
+.ER-Diagramm
+[plantuml,ER-Diagramm,svg]
+----
+include::ER-Diagramm.plantuml[]
+----
+
+== Programmierrichtlinien für TypeScript und JavaScript
+
+Für die Programmierung mit *TypeScript* und *JavaScript* sind folgende
+Styleguides empfehlenswert:
+
+[horizontal]
+_E-Book zu TypeScript_:: https://github.com/gibbok/typescript-book
+_Google_:: https://google.github.io/styleguide/tsguide.html
+_Airbnb_:: https://github.com/airbnb/javascript
+_Shopify_:: https://github.com/Shopify/javascript
+_React bei Airbnb_:: https://github.com/airbnb/javascript/tree/master/react
+_Angular_:: https://angular.io/docs/ts/latest/guide/style-guide.html
+_Microsoft_:: https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
+
+Von IBM und Red Hat gibt es bei GitHub _Node.js Reference Architecture_
+https://github.com/nodeshift/nodejs-reference-architecture, wo alle möglichen
+Aspekte bei der Softwareentwicklung mit Node berücksichtigt sind und
+entsprechende Empfehlungen bzw. Best Practices beschrieben sind.
+Diese Dokumentation muss man einfach gelesen haben. Ebenfalls empfehlenswert
+ist https://github.com/goldbergyoni/nodebestpractices.

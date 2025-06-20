@@ -1,0 +1,15 @@
+@startuml Sequenzdiagramm
+
+actor Gast
+
+boundary SupplementGetController
+control SupplementReadService
+database supplement
+
+Gast -> SupplementGetController : GET / getById()
+SupplementGetController -> SupplementReadService: findById()
+SupplementReadService -> supplement: [TypeORM]
+
+footer (c) SWE Supplement
+
+@enduml
