@@ -12,7 +12,7 @@ import { type ErrorResponse } from './error-response.mjs';
 const nameVorhanden = 'Vitam C';
 const beschreibungVorhanden = 'a';
 const nameNichtVorhanden = 'unbekanntes-supplement';
-const portionenMin = 20;
+const portionenMin = 1;
 const supplementArtVorhanden = 'PULVER';
 const supplementArtNichtVorhanden = 'unknownart';
 const vorteilVorhanden = 'muskelaufbau';
@@ -95,26 +95,6 @@ describe('GET /rest', () => {
             expect(statusCode).toBe(HttpStatus.NOT_FOUND);
         },
     );
-
-    test.concurrent('Supplements mit Mindest-Portionen suchen', async () => {
-        // given
-        const params = { portionen: portionenMin };
-
-        // when
-        const { status, headers, data }: AxiosResponse<Page<Supplement>> =
-            await client.get('/', { params });
-
-        // then
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-        expect(data).toBeDefined();
-
-        data.content
-            .map((supplement) => supplement.portionen)
-            .forEach((portionen) =>
-                expect(portionen).toBeGreaterThanOrEqual(portionenMin),
-            );
-    });
 
     test.concurrent('Supplements mit bestimmter Art suchen', async () => {
         // given

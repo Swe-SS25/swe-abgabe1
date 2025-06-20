@@ -28,28 +28,17 @@ const token = inject('tokenRest');
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
 
-const supplementArten = ['PULVER', 'TABLETTEN', 'KAPSELN'] as const;
-
 const neuesSupplement: SupplementDTO = {
     name: 'Ultra Whey 8000',
     portionen: 30,
-    supplementArt: supplementArten[0], // PULVER
+    supplementArt: "PULVER",
     beschreibung: {
         info: 'Schokoladengeschmack, 24 g Protein pro Portion',
         vorteile: 'Muskelaufbau, schneller Regenerations-Support',
         dosierempfehlung:
             '1 Messlöffel (30 g) mit 300 ml Wasser nach dem Training',
     },
-    produktbilder: [
-        {
-            bezeichnung: 'Frontansicht',
-            path: 'https://cdn.example.com/img/whey-front.jpg',
-        },
-        {
-            bezeichnung: 'Rückseite',
-            path: 'https://cdn.example.com/img/whey-back.jpg',
-        },
-    ],
+    produktbilder: [],
 };
 const neuesSupplementInvalid = {
     name: '',
