@@ -21,7 +21,9 @@ export type Pageable = {
     readonly number: number;
     readonly size: number;
 };
-
+/**
+ * Eigenschaften für die Erstellung eines Pageable-Objekts.
+ */
 type PageableProps = {
     readonly number?: string;
     readonly size?: string;

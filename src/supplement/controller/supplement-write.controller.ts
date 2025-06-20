@@ -72,7 +72,7 @@ export class SupplementWriteController {
      * existieren.
      *
      * @param supplementDTO JSON-Daten für ein Supplement im Request-Body.
-     * @param req: Request-Objekt von Express für den Location-Header.
+     * @param req Request-Objekt von Express für den Location-Header.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
@@ -105,7 +105,7 @@ export class SupplementWriteController {
      * Postman: Body mit "form-data", key: "file" und "File" im Dropdown-Menü
      * @param id ID des vorhandenen Supplements
      * @param file Binärdatei als `File`-Objekt von _Multer_.
-     * @param req: Request-Objekt von Express für den Location-Header.
+     * @param req Request-Objekt von Express für den Location-Header.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
@@ -173,7 +173,7 @@ export class SupplementWriteController {
      * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn der neue
      * Titel oder die neue ISBN-Nummer bereits existieren.
      *
-     * @param buchDTO Buchdaten im Body des Request-Objekts.
+     * @param supplementDTO Buchdaten im Body des Request-Objekts.
      * @param id Pfad-Paramater für die ID.
      * @param version Versionsnummer aus dem Header _If-Match_.
      * @param res Leeres Response-Objekt von Express.
