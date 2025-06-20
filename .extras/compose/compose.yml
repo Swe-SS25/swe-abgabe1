@@ -40,8 +40,8 @@ include:
 # https://docs.docker.com/compose/compose-file/05-services
 services:
   supplement:
-  # ToDo: Name anpassen
-    image: library/supplement:2025.4.1-bookworm
+    # ToDo: Name anpassen
+    image: library/supplement:latest
     depends_on:
       db:
         condition: service_healthy
@@ -74,8 +74,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 2G
         reservations:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 1G
